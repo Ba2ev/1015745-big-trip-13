@@ -1,7 +1,7 @@
 # Проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
-* Студент: [Дмитрий Бабаев](https://up.htmlacademy.ru/ecmascript/13/user/1015745).
-* Наставник: `Неизвестно`.
+- Студент: [Дмитрий Бабаев](https://up.htmlacademy.ru/ecmascript/13/user/1015745).
+- Наставник: [Виктор Кан](https://htmlacademy.ru/profile/viktorkan).
 
 ---
 
