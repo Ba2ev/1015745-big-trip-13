@@ -22,7 +22,7 @@ const generateEventInfo = () => {
   };
 
   const type = Object.keys(events)[getRandomInteger(0, Object.keys(events).length - 1)];
-  const name = events[type][getRandomInteger(0, type.length - 1)];
+  const name = events[type][getRandomInteger(0, events[type].length - 1)];
 
   return {type, name};
 };
@@ -57,15 +57,16 @@ const generateDescriptionImages = () => {
   return descriptionImagesLinks;
 };
 
-const generateDate = () => {
+const generateDates = () => {
   const maxDaysGap = 7;
-  const durationStep = 30;
-  const durationGap = 6;
+  const durationStep = 15;
+  const maxDurationDays = 3;
 
   const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
+  const maxSteps = (maxDurationDays * 24) / (durationStep / 60);
 
   const start = dayjs().add(daysGap, `day`).toDate();
-  const end = dayjs(start).add(getRandomInteger(1, durationGap) * durationStep, `minute`).toDate();
+  const end = dayjs(start).add(getRandomInteger(1, maxSteps) * durationStep, `minute`).toDate();
 
   return {
     start,
@@ -74,7 +75,12 @@ const generateDate = () => {
 };
 
 const generateOffers = () => {
-  const offerDatas = [{name: `add luggage`, price: 50}, {name: `Switch to comfort`, price: 80}, {name: `add meal`, price: 15}, {name: `Choose seats`, price: 5}, {name: `Travel by train`, price: 40}];
+  const offerDatas = [
+    {name: `add luggage`, price: 50, isActive: Boolean(getRandomInteger(0, 1))},
+    {name: `Switch to comfort`, price: 80, isActive: Boolean(getRandomInteger(0, 1))},
+    {name: `add meal`, price: 15, isActive: Boolean(getRandomInteger(0, 1))},
+    {name: `Choose seats`, price: 5, isActive: Boolean(getRandomInteger(0, 1))},
+    {name: `Travel by train`, price: 40, isActive: Boolean(getRandomInteger(0, 1))}];
 
   const offersCount = getRandomInteger(0, offerDatas.length);
 
@@ -88,14 +94,14 @@ const generateOffers = () => {
     offers.add(offerDatas[getRandomInteger(0, offerDatas.length - 1)]);
   }
 
-  return offers;
+  return [...offers];
 };
 
 export const generateEvent = () => {
   const event = generateEventInfo();
   const text = generateDescriptionText();
   const images = generateDescriptionImages();
-  const date = generateDate();
+  const date = generateDates();
   const offers = generateOffers();
   const price = getRandomInteger(15, 500);
   const isFavourite = Boolean(getRandomInteger(0, 1));
@@ -106,9 +112,9 @@ export const generateEvent = () => {
       text,
       images,
     },
-    offers,
     date,
     price,
+    offers,
     isFavourite,
   };
 };

@@ -9,7 +9,7 @@ import {createEventAddTemplate} from "./view/event-add.js";
 import {createEventEditTemplate} from "./view/event-edit.js";
 import { generateEvent } from './mock/event';
 
-const EVENT_COUNT = 30;
+const EVENT_COUNT = 20;
 
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 console.log(events);
