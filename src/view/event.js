@@ -1,8 +1,11 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
-import {getDateTimeFormat} from '../util';
 
 dayjs.extend(durationPlugin);
+
+const getDateTimeFormat = (date, isTime) => {
+  return isTime ? dayjs(date).format(`YYYY-MM-DD[T]HH:mm`) : dayjs(date).format(`YYYY-MM-DD`);
+};
 
 const getEventDuration = (dateStart, dateEnd) => {
   const diff = dayjs(dateEnd).diff(dayjs(dateStart));

@@ -1,5 +1,6 @@
-import dayjs from 'dayjs';
+export const getRandomInteger = (a = 0, b = 1) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
 
-export const getDateTimeFormat = (date, isTime) => {
-  return isTime ? dayjs(date).format(`YYYY-MM-DD[T]HH:mm`) : dayjs(date).format(`YYYY-MM-DD`);
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
