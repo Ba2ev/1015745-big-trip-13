@@ -13,7 +13,7 @@ const getEventDuration = (dateStart, dateEnd) => {
   const hours = dayjs.duration(diff).hours().toString();
   const minutes = dayjs.duration(diff).minutes().toString();
 
-  return `${days > 0 ? days + `D` : ''} ${hours > 0 ? hours.padStart(2, `0`) + `H` : ``} ${minutes.padStart(2, `0`)}M`;
+  return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours.padStart(2, `0`) + `H` : ``} ${minutes.padStart(2, `0`)}M`;
 };
 
 const renderOffers = (offers) => {

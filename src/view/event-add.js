@@ -3,7 +3,7 @@ import {eventData} from '../mock/eventData';
 
 const renderEventsList = (eventType) => {
   const typeList = eventData[eventType];
-  console.log(typeList);
+
   return `<datalist id="destination-list-1">
     ${typeList.map((item) => `<option value="${item}"></option>`).join(``)}
   </datalist>`;
