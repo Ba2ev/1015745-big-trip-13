@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {eventData} from './eventData';
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -8,21 +9,9 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const generateEventInfo = () => {
-  const events = {
-    taxi: [`Park`, `Seafront`, `City square`],
-    bus: [`Rome`, `Milan`, `Modena`],
-    train: [`Moscow`, `Kyiv`, `Minsk`],
-    ship: [`Sweden`, `Norway`, `Finland`],
-    transport: [`France`, `Germany`, `Poland`],
-    drive: [`Home`, `Work`, `Relax`],
-    flight: [`Geneva`, `Amserdam`, `Chamonix`],
-    checkIn: [`Hassler`, `Plaza`, `Radisson`],
-    sightseeing: [`London`, `Paris`, `Madrid`],
-    restaurant: [`Osteria`, `Mirazur`, `Asador `],
-  };
 
-  const type = Object.keys(events)[getRandomInteger(0, Object.keys(events).length - 1)];
-  const name = events[type][getRandomInteger(0, events[type].length - 1)];
+  const type = Object.keys(eventData)[getRandomInteger(0, Object.keys(eventData).length - 1)];
+  const name = eventData[type][getRandomInteger(0, eventData[type].length - 1)];
 
   return {type, name};
 };

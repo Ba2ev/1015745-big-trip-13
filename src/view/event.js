@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
+import {getDateTimeFormat} from '../util';
 
 dayjs.extend(durationPlugin);
 
@@ -12,18 +13,14 @@ const getEventDuration = (dateStart, dateEnd) => {
   return `${days > 0 ? days + `D` : ''} ${hours > 0 ? hours.padStart(2, `0`) + `H` : ``} ${minutes.padStart(2, `0`)}M`;
 };
 
-const getDateTimeFormat = (date, isTime) => {
-  return isTime ? dayjs(date).format(`YYYY-MM-DD[T]HH:mm`) : dayjs(date).format(`YYYY-MM-DD`);
-};
-
 const renderOffers = (offers) => {
   return `<h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-    ${offers.map((offer) => {
+    ${offers.map(({name, price}) => {
     return `<li class="event__offer">
-        <span class="event__offer-title">${offer.name}</span>
+        <span class="event__offer-title">${name}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
+        <span class="event__offer-price">${price}</span>
       </li>`;
   }).join(``)}
   </ul>`;

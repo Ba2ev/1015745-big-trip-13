@@ -7,12 +7,12 @@ import {createEventListTemplate} from "./view/event-list.js";
 import {createEventTemplate} from "./view/event.js";
 import {createEventAddTemplate} from "./view/event-add.js";
 import {createEventEditTemplate} from "./view/event-edit.js";
-import { generateEvent } from './mock/event';
+import {generateEvent} from './mock/event';
 
 const EVENT_COUNT = 20;
 
-const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-console.log(events);
+const events = new Array(EVENT_COUNT).fill().map(generateEvent).sort((a, b) => a.date.start - b.date.start);
+console.log(events[1]);
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
@@ -31,11 +31,11 @@ const siteHeaderTripInfoElement = siteHeaderTripElement.querySelector(`.trip-inf
 render(siteHeaderTripInfoElement, createTripCostTemplate(), `beforeend`);
 
 const siteMainEventsListElement = siteMainEventsElement.querySelector(`.trip-events__list`);
-for (let i = 0; i < EVENT_COUNT; i++) {
+for (let i = 2; i < EVENT_COUNT; i++) {
   render(siteMainEventsListElement, createEventTemplate(events[i]), `beforeend`);
 }
 
-render(siteMainEventsListElement, createEventAddTemplate(), `afterbegin`);
-render(siteMainEventsListElement, createEventEditTemplate(), `afterbegin`);
+render(siteMainEventsListElement, createEventAddTemplate(events[1]), `afterbegin`);
+render(siteMainEventsListElement, createEventEditTemplate(events[0]), `afterbegin`);
 
 
