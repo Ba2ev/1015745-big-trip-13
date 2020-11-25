@@ -26,13 +26,22 @@ const renderOffersTemplate = (offers) => {
   </section>`;
 };
 
+const renderImagesList = (imageList) => {
+  return `<div class="event__photos-container">
+  <div class="event__photos-tape">
+    ${imageList.map((imageLink) => `<img class="event__photo" src="${imageLink}" alt="Event photo">`)}
+  </div>
+</div>`;
+};
+
 export const createEventEditTemplate = (eventItem) => {
   const {event, date, price, offers, description} = eventItem;
 
+  const datalist = renderEventsList(event.type);
   const dateStart = dayjs(date.start).format(`DD/MM/YY HH:mm`);
   const dateEnd = dayjs(date.end).format(`DD/MM/YY HH:mm`);
   const offersTemplate = offers ? renderOffersTemplate(offers) : ``;
-  const datalist = renderEventsList(event.type);
+  const imagesTemplate = description.images === null ? `` : renderImagesList(description.images);
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -136,6 +145,7 @@ export const createEventEditTemplate = (eventItem) => {
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description.text}</p>
+          ${imagesTemplate}
         </section>
       </section>
     </form>

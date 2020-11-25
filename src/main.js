@@ -13,9 +13,6 @@ const eventCount = getRandomInteger(2, 20);
 
 const events = new Array(eventCount).fill().map(generateEvent).sort((a, b) => a.date.start - b.date.start);
 
-const eventRoutes = new Set([...events.map(({event}) => event.name)]);
-const routeList = [...eventRoutes];
-
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
@@ -24,7 +21,7 @@ const siteHeaderTripElement = document.querySelector(`.trip-main`);
 const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
 const siteMainEventsElement = document.querySelector(`.trip-events`);
 
-render(siteHeaderTripElement, createTripInfoTemplate(routeList), `afterbegin`);
+render(siteHeaderTripElement, createTripInfoTemplate(events), `afterbegin`);
 render(siteHeaderControlsElement, createMenuTemplate(), `afterbegin`);
 render(siteHeaderControlsElement, createFilterTemplate(), `beforeend`);
 render(siteMainEventsElement, createSortTemplate(), `afterbegin`);
@@ -38,4 +35,4 @@ for (let i = 1; i < eventCount; i++) {
 render(siteMainEventsListElement, createEventEditTemplate(events[0]), `afterbegin`);
 
 const siteHeaderTripInfoElement = siteHeaderTripElement.querySelector(`.trip-info`);
-render(siteHeaderTripInfoElement, createTripCostTemplate(), `beforeend`);
+render(siteHeaderTripInfoElement, createTripCostTemplate(events), `beforeend`);
