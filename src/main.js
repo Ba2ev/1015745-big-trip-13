@@ -1,5 +1,6 @@
 import {getRandomInteger, render, RenderPosition} from './util';
 import {generateEvent} from './mock/event';
+import TripInfoView from "./view/trip-info.js";
 import TripRouteView from "./view/trip-route.js";
 import TripCostView from "./view/trip-cost.js";
 import MenuView from "./view/menu.js";
@@ -50,26 +51,30 @@ const renderEvent = (eventListElement, event) => {
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(eventListElement, eventComponent.getElement(event), RenderPosition.BEFOREEND);
+  eventEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceFormToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  render(eventListElement, eventComponent.getElement(event));
 };
 
 render(siteHeaderControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN);
-render(siteHeaderControlsElement, new FilterView().getElement(), RenderPosition.BEFOREEND);
-render(siteHeaderTripElement, new EventAddBtn().getElement(), RenderPosition.BEFOREEND);
+render(siteHeaderControlsElement, new FilterView().getElement());
+render(siteHeaderTripElement, new EventAddBtn().getElement());
 
 if (events.length === 0) {
-  render(siteMainEventsElement, new EventEmpty().getElement(), RenderPosition.BEFOREEND);
+  render(siteMainEventsElement, new EventEmpty().getElement());
 } else {
-  render(siteHeaderTripElement, new TripRouteView(events).getElement(), RenderPosition.AFTERBEGIN);
-
-  const siteHeaderTripInfoElement = siteHeaderTripElement.querySelector(`.trip-info`);
-  render(siteHeaderTripInfoElement, new TripCostView(events).getElement(), RenderPosition.
-  BEFOREEND);
+  const tripInfoElement = new TripInfoView();
+  render(siteHeaderTripElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN);
+  render(tripInfoElement.getElement(), new TripRouteView(events).getElement(), RenderPosition.AFTERBEGIN);
+  render(tripInfoElement.getElement(), new TripCostView(events).getElement());
 
   render(siteMainEventsElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
   const eventListComponent = new EventListView();
-  render(siteMainEventsElement, eventListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(siteMainEventsElement, eventListComponent.getElement());
 
   for (let i = 0; i < eventCount; i++) {
     renderEvent(eventListComponent.getElement(), events[i]);

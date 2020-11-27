@@ -8,7 +8,7 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
-export const render = (container, element, place) => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -26,7 +26,7 @@ export const renderTemplate = (container, template, place) => {
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
-  return newElement.lastChild;
+  return newElement.firstChild;
 };
 
 export const getDateTimeFormat = (date, isTime) => {

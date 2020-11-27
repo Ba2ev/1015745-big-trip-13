@@ -10,12 +10,10 @@ const createTripRouteTemplate = (events) => {
 
   const period = dayjs(eventStartDate).month() === dayjs(eventEndDate).month() ? `${dayjs(eventStartDate).format(`MMM DD`)}&nbsp;&mdash;&nbsp;${dayjs(eventEndDate).format(`DD`)}` : `${dayjs(eventStartDate).format(`MMM DD`)}&nbsp;&mdash;&nbsp;${dayjs(eventEndDate).format(`MMM DD`)}`;
 
-  return `<section class="trip-main__trip-info  trip-info">
-    <div class="trip-info__main">
+  return `<div class="trip-info__main">
       <h1 class="trip-info__title">${route}</h1>
       <p class="trip-info__dates">${period}</p>
-    </div>
-  </section>`;
+    </div>`;
 };
 
 
