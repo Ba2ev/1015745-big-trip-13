@@ -1,3 +1,4 @@
+import {createElement} from '../util';
 import dayjs from 'dayjs';
 import {eventData} from '../mock/eventData';
 
@@ -34,7 +35,7 @@ const renderImagesList = (imageList) => {
   </div>
 </div>`;
 };
-export const createEventAddTemplate = (eventItem) => {
+const createEventAddTemplate = (eventItem) => {
   const {event, date, price, offers, description} = eventItem;
 
   const datalist = renderEventsList(event.type);
@@ -148,3 +149,26 @@ export const createEventAddTemplate = (eventItem) => {
   </form>
 </li>`;
 };
+
+export default class EventAdd {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventAddTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
