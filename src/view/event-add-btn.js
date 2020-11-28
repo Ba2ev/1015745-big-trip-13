@@ -1,24 +1,24 @@
 import {createElement} from "../util";
 
-const createEventListTemplate = () => {
-  return `<ul class="trip-events__list"></ul>`;
+const createEventAddBtnTemplate = () => {
+  return `<button class="trip-main__event-add-btn btn btn--big btn--yellow" type="button">
+    New event
+  </button>`;
 };
 
-
-export default class EventList {
+export default class EventAddBtn {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createEventListTemplate();
+    return createEventAddBtnTemplate();
   }
 
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
-
     return this._element;
   }
 

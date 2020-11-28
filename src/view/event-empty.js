@@ -1,17 +1,16 @@
-import {createElement} from "../util.js";
+import {createElement} from "../util";
 
-const createTripInfoTemplate = () => {
-  return `<section class="trip-main__trip-info trip-info">
-  </section>`;
+const createEventEmptyTemplate = () => {
+  return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
 };
 
-export default class TripInfo {
+export default class EventEmpty {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripInfoTemplate();
+    return createEventEmptyTemplate();
   }
 
   getElement() {
