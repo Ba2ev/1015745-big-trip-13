@@ -75,7 +75,6 @@ if (events.length === 0) {
 
   const eventListComponent = new EventListView();
   render(siteMainEventsElement, eventListComponent.getElement());
-
   for (let i = 0; i < eventCount; i++) {
     renderEvent(eventListComponent.getElement(), events[i]);
   }
