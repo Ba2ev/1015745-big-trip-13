@@ -1,4 +1,4 @@
-import {createElement} from '../util';
+import AbstractView from "./abstract.js";
 import dayjs from 'dayjs';
 import {eventData} from '../mock/eventData';
 
@@ -150,25 +150,24 @@ const createEventAddTemplate = (eventItem) => {
 </li>`;
 };
 
-export default class EventAdd {
+export default class EventAdd extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._submitHandler = this._submitHandler.bind(this);
   }
 
   getTemplate() {
     return createEventAddTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _submitHandler(evt) {
+    evt.preventDefault();
+    this._callback.submit();
   }
 
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(callback) {
+    this._callback.submit = callback;
+    this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
   }
 }
