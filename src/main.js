@@ -1,4 +1,5 @@
-import {getRandomInteger, render, RenderPosition} from './util';
+import {getRandomInteger} from './utils/common.js';
+import {render, RenderPosition, replace} from './utils/render';
 import {generateEvent} from './mock/event';
 import TripInfoView from "./view/trip-info.js";
 import TripRouteView from "./view/trip-route.js";
@@ -25,11 +26,11 @@ const renderEvent = (eventListElement, event) => {
   const eventEditComponent = new EventEditView(event);
 
   const replaceEventToForm = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToEvent = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -40,18 +41,17 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setRollupClickHandler(() => {
     replaceEventToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setSubmitHandler(() => {
     replaceFormToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventEditComponent.setRollupClickHandler(() => {
     replaceFormToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
@@ -59,23 +59,23 @@ const renderEvent = (eventListElement, event) => {
   render(eventListElement, eventComponent.getElement(event));
 };
 
-render(siteHeaderControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN);
-render(siteHeaderControlsElement, new FilterView().getElement());
-render(siteHeaderTripElement, new EventAddBtn().getElement());
+render(siteHeaderControlsElement, new MenuView(), RenderPosition.AFTERBEGIN);
+render(siteHeaderControlsElement, new FilterView());
+render(siteHeaderTripElement, new EventAddBtn());
 
 if (events.length === 0) {
-  render(siteMainEventsElement, new EventEmpty().getElement());
+  render(siteMainEventsElement, new EventEmpty());
 } else {
   const tripInfoElement = new TripInfoView();
-  render(siteHeaderTripElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN);
-  render(tripInfoElement.getElement(), new TripRouteView(events).getElement(), RenderPosition.AFTERBEGIN);
-  render(tripInfoElement.getElement(), new TripCostView(events).getElement());
+  render(siteHeaderTripElement, tripInfoElement, RenderPosition.AFTERBEGIN);
+  render(tripInfoElement, new TripRouteView(events), RenderPosition.AFTERBEGIN);
+  render(tripInfoElement, new TripCostView(events));
 
-  render(siteMainEventsElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+  render(siteMainEventsElement, new SortView(), RenderPosition.AFTERBEGIN);
 
   const eventListComponent = new EventListView();
-  render(siteMainEventsElement, eventListComponent.getElement());
+  render(siteMainEventsElement, eventListComponent);
   for (let i = 0; i < eventCount; i++) {
-    renderEvent(eventListComponent.getElement(), events[i]);
+    renderEvent(eventListComponent, events[i]);
   }
 }

@@ -1,26 +1,11 @@
-import {createElement} from "../util";
+import AbstractView from "./abstract.js";
 
 const createEventEmptyTemplate = () => {
   return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
 };
 
-export default class EventEmpty {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventEmpty extends AbstractView {
   getTemplate() {
     return createEventEmptyTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

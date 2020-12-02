@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {eventData} from './eventData';
-import {getRandomInteger} from '../util';
+import {getRandomInteger} from '../utils/common.js';
 
 const generateEventInfo = () => {
 
