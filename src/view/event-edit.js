@@ -172,7 +172,7 @@ export default class EventEdit extends AbstractView {
 
   _submitHandler(evt) {
     evt.preventDefault();
-    this._callback.submit();
+    this._callback.submit(this._event);
   }
 
   setRollupClickHandler(callback) {

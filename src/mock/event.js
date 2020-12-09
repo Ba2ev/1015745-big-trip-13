@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import {eventData} from './eventData';
 import {getRandomInteger} from '../utils/common.js';
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateEventInfo = () => {
 
   const type = Object.keys(eventData)[getRandomInteger(0, Object.keys(eventData).length - 1)];
@@ -81,6 +83,7 @@ const generateOffers = () => {
 };
 
 export const generateEvent = () => {
+  const id = generateId();
   const event = generateEventInfo();
   const text = generateDescriptionText();
   const images = generateDescriptionImages();
@@ -90,6 +93,7 @@ export const generateEvent = () => {
   const isFavourite = Boolean(getRandomInteger(0, 1));
 
   return {
+    id,
     event,
     description: {
       text,
