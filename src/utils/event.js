@@ -19,10 +19,10 @@ export const getEventDuration = (dateStart, dateEnd) => {
 export const sortEventTime = (eventA, eventB) => {
   const diffEventA = dayjs(eventA.date.end).diff(dayjs(eventA.date.start));
   const diffEventB = dayjs(eventB.date.end).diff(dayjs(eventB.date.start));
-  return diffEventA - diffEventB;
+  return diffEventB - diffEventA;
 };
 
 export const sortEventPrice = (eventA, eventB) => {
 
-  return eventA.price - eventB.price;
+  return eventB.price - eventA.price;
 };
