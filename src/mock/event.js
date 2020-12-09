@@ -44,13 +44,13 @@ const generateDescriptionImages = () => {
 
 const generateDates = () => {
   const maxDaysGap = 7;
-  const durationStep = 15;
+  const durationStep = 5;
   const maxDurationDays = 3;
 
   const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
   const maxSteps = (maxDurationDays * 24) / (durationStep / 60);
 
-  const start = dayjs().add(daysGap, `day`).toDate();
+  const start = dayjs().add(daysGap, `day`).add(getRandomInteger(1, maxSteps) * durationStep, `minute`).toDate();
   const end = dayjs(start).add(getRandomInteger(1, maxSteps) * durationStep, `minute`).toDate();
 
   return {

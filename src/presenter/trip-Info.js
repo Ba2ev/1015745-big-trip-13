@@ -6,6 +6,7 @@ import TripCostView from "../view/trip-cost.js";
 export default class TripInfo {
   constructor(tripInfoContainer) {
     this._tripInfoContainer = tripInfoContainer;
+    this._events = [];
 
     this._tripRouteComponent = null;
     this._tripCostComponent = null;
