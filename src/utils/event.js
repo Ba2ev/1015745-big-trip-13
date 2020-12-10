@@ -15,3 +15,14 @@ export const getEventDuration = (dateStart, dateEnd) => {
 
   return `${days > 0 ? days + `D` : ``} ${hours > 0 ? hours.padStart(2, `0`) + `H` : ``} ${minutes.padStart(2, `0`)}M`;
 };
+
+export const sortEventTime = (eventA, eventB) => {
+  const diffEventA = dayjs(eventA.date.end).diff(dayjs(eventA.date.start));
+  const diffEventB = dayjs(eventB.date.end).diff(dayjs(eventB.date.start));
+  return diffEventB - diffEventA;
+};
+
+export const sortEventPrice = (eventA, eventB) => {
+
+  return eventB.price - eventA.price;
+};
