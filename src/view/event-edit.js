@@ -1,11 +1,27 @@
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 import dayjs from 'dayjs';
 import {eventData} from '../mock/eventData';
+import {generateOffers, generateDescriptionText, generateDescriptionImages} from '../mock/event';
 
-const renderEventsList = (eventType) => {
-  const typeList = eventData[eventType];
+const BLANK_EVENT = {
+  type: `taxi`,
+  offers: null,
+  place: {
+    name: ``,
+    text: ``,
+    images: null,
+  },
+  date: {
+    start: ``,
+    end: ``,
+  },
+  price: ``,
+  isFavorite: false
+};
+
+const renderPlaceList = () => {
   return `<datalist id="destination-list-1">
-    ${typeList.map((item) => `<option value="${item}"></option>`).join(``)}
+    ${eventData.places.map((item) => `<option value="${item}"></option>`).join(``)}
   </datalist>`;
 };
 
@@ -35,14 +51,14 @@ const renderImagesList = (imageList) => {
 </div>`;
 };
 
-const createEventEditTemplate = (eventItem) => {
-  const {event, date, price, offers, description} = eventItem;
+const createEventEditTemplate = (data) => {
+  const {type, date, price, offers, place, isOffers, isImages} = data;
 
-  const datalist = renderEventsList(event.type);
+  const placeList = renderPlaceList();
   const dateStart = dayjs(date.start).format(`DD/MM/YY HH:mm`);
   const dateEnd = dayjs(date.end).format(`DD/MM/YY HH:mm`);
-  const offersTemplate = offers ? renderOffersTemplate(offers) : ``;
-  const imagesTemplate = description.images === null ? `` : renderImagesList(description.images);
+  const offersTemplate = isOffers ? renderOffersTemplate(offers) : ``;
+  const imagesTemplate = isImages ? renderImagesList(place.images) : ``;
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -50,7 +66,7 @@ const createEventEditTemplate = (eventItem) => {
         <div class="event__type-wrapper">
           <label class="event__type event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -113,10 +129,10 @@ const createEventEditTemplate = (eventItem) => {
 
         <div class="event__field-group event__field-group--destination">
           <label class="event__label event__type-output" for="event-destination-1">
-            ${event.type}
+            ${type}
           </label>
-          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${event.name}" list="destination-list-1">
-          ${datalist}
+          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${place.name}" list="destination-list-1">
+          ${placeList}
         </div>
 
         <div class="event__field-group event__field-group--time">
@@ -145,7 +161,7 @@ const createEventEditTemplate = (eventItem) => {
         ${offersTemplate}
         <section class="event__section event__section--destination">
           <h3 class="event__section-title event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description.text}</p>
+          <p class="event__destination-description">${place.text}</p>
           ${imagesTemplate}
         </section>
       </section>
@@ -153,16 +169,75 @@ const createEventEditTemplate = (eventItem) => {
   </li>`;
 };
 
-export default class EventEdit extends AbstractView {
-  constructor(event) {
+export default class EventEdit extends SmartView {
+  constructor(event = BLANK_EVENT) {
     super();
     this._event = event;
+    this._data = EventEdit.parseEventToData(event);
+
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
+    this._typeToggleHandler = this._typeToggleHandler.bind(this);
+    this._placeToggleHandler = this._placeToggleHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset(event) {
+    this.updateData(
+        EventEdit.parseEventToData(event)
+    );
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event);
+    return createEventEditTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setSubmitHandler(this._callback.submit);
+    this.setRollupClickHandler(this._callback.rollupClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__type-group`)
+      .addEventListener(`click`, this._typeToggleHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._placeToggleHandler);
+  }
+
+  _typeToggleHandler({target}) {
+    const newOffers = generateOffers(target.textContent);
+
+    this.updateData(Object.assign(
+        {},
+        this._event,
+        {
+          type: target.textContent,
+          offers: newOffers,
+        }
+    )
+    );
+
+  }
+
+  _placeToggleHandler({target}) {
+    if (target.value !== ``) {
+      this.updateData({
+        place: Object.assign(
+            {},
+            this._event.place,
+            {
+              name: target.value,
+              text: generateDescriptionText(),
+              images: generateDescriptionImages(),
+            }
+        )
+      }
+      );
+    }
   }
 
   _rollupClickHandler(evt) {
@@ -172,7 +247,7 @@ export default class EventEdit extends AbstractView {
 
   _submitHandler(evt) {
     evt.preventDefault();
-    this._callback.submit(this._event);
+    this._callback.submit(EventEdit.parseDataToEvent(this._data));
   }
 
   setRollupClickHandler(callback) {
@@ -183,5 +258,25 @@ export default class EventEdit extends AbstractView {
   setSubmitHandler(callback) {
     this._callback.submit = callback;
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+        {},
+        event,
+        {
+          isOffers: event.offers !== null,
+          isImages: event.place.images !== null,
+        }
+    );
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    delete data.isOffers;
+    delete data.isImages;
+
+    return data;
   }
 }

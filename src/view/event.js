@@ -16,7 +16,7 @@ const renderOffers = (offers) => {
 };
 
 const createEventTemplate = (eventItem) => {
-  const {event, date, price, offers, isFavourite} = eventItem;
+  const {type, place, date, price, offers, isFavourite} = eventItem;
 
   const shortDate = dayjs(date.start).format(`MMM DD`);
 
@@ -33,9 +33,9 @@ const createEventTemplate = (eventItem) => {
     <div class="event">
       <time class="event__date" datetime=${getDateTimeFormat(date.start, false)}>${shortDate}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${event.type} ${event.name}</h3>
+      <h3 class="event__title">${type} ${place.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateTimeFormat(date.start, true)}>${dateStart}</time>

@@ -1,12 +1,15 @@
 export const eventData = {
-  taxi: [`Houston`, `Chicago`, `New York`],
-  bus: [`Rome`, `Milan`, `Modena`],
-  train: [`Moscow`, `Kyiv`, `Minsk`],
-  ship: [`Stockholm`, `Oslo`, `Helsinki`],
-  transport: [`Paris`, `Berlin`, `Warsaw`],
-  drive: [`Samara`, `Omsk`, `Ufa`],
-  flight: [`Geneva`, `Amsterdam`, `Chamonix`],
-  checkIn: [`Barcelona`, `Madrid`, `Vigo`],
-  sightseeing: [`London`, `Paris`, `Madrid`],
-  restaurant: [`Marseille`, `Lyon`, `Toulouse`],
+  offers: {
+    "taxi": [`Switch to comfort class`, `Long waiting`],
+    "bus": [`Choose seats`, `Insurance`, `Add luggage`],
+    "train": [`Choose seats`, `Insurance`],
+    "ship": [`Choose seats`, `Switch to comfort class`, `Insurance`],
+    "transport": [],
+    "drive": [],
+    "flight": [`Choose seats`, `Switch to comfort class`, `Insurance`, `Add meal`, `Add luggage`],
+    'check-in': [`Choose room`, `Spa access`, `Switch to comfort class`],
+    "sightseeing": [`Travel by bus`, `Personal guide`, `Food court`],
+    "restaurant": [`Choose table`, `Parking`, `Early Access`],
+  },
+  places: [`Rome`, `Milan`, `Barcelona`, `Madrid`, `Marseille`, `Lyon`, `Houston`, `Chicago`]
 };

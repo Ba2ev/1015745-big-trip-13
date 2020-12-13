@@ -36,13 +36,13 @@ const renderImagesList = (imageList) => {
 </div>`;
 };
 const createEventAddTemplate = (eventItem) => {
-  const {event, date, price, offers, description} = eventItem;
+  const {type, date, price, offers, place} = eventItem;
 
   const datalist = renderEventsList(event.type);
   const dateStart = dayjs(date.start).format(`DD/MM/YY HH:mm`);
   const dateEnd = dayjs(date.end).format(`DD/MM/YY HH:mm`);
   const offersTemplate = offers ? renderOffersTemplate(offers) : ``;
-  const imagesTemplate = description.images === null ? `` : renderImagesList(description.images);
+  const imagesTemplate = place.images === null ? `` : renderImagesList(place.images);
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -113,9 +113,9 @@ const createEventAddTemplate = (eventItem) => {
 
       <div class="event__field-group event__field-group--destination">
         <label class="event__label event__type-output" for="event-destination-1">
-          ${event.type}
+          ${type}
         </label>
-        <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${event.name}" list="destination-list-1">
+        <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${place.name}" list="destination-list-1">
       ${datalist}
       </div>
 
@@ -142,7 +142,7 @@ const createEventAddTemplate = (eventItem) => {
       ${offersTemplate}
       <section class="event__section event__section--destination">
         <h3 class="event__section-title event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description.text}</p>
+        <p class="event__destination-description">${place.text}</p>
         ${imagesTemplate}
       </section>
     </section>
