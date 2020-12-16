@@ -6,15 +6,19 @@ const Mode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`
 };
+
 export default class Event {
   constructor(eventListContainer, changeData, changeMode) {
     this._eventListContainer = eventListContainer;
+
+    this._event = null;
+
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._mode = Mode.DEFAULT;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
-    this._mode = Mode.DEFAULT;
 
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleRollDownClick = this._handleRollDownClick.bind(this);
@@ -86,7 +90,8 @@ export default class Event {
     this._replaceFormToEvent();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(event) {
+    this._changeData(event);
     this._replaceFormToEvent();
   }
 

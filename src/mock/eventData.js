@@ -1,15 +1,16 @@
 export const eventData = {
   offers: {
-    "taxi": [`Switch to comfort class`, `Long waiting`],
-    "bus": [`Choose seats`, `Insurance`, `Add luggage`],
-    "train": [`Choose seats`, `Insurance`],
-    "ship": [`Choose seats`, `Switch to comfort class`, `Insurance`],
+    "taxi": [`switch-to-comfort-class`, `long-waiting`],
+    "bus": [`choose-seats`, `insurance`, `add-luggage`],
+    "train": [`choose-seats`, `insurance`],
+    "ship": [`choose-seats`, `switch-to-comfort-class`, `insurance`],
     "transport": [],
     "drive": [],
-    "flight": [`Choose seats`, `Switch to comfort class`, `Insurance`, `Add meal`, `Add luggage`],
-    'check-in': [`Choose room`, `Spa access`, `Switch to comfort class`],
-    "sightseeing": [`Travel by bus`, `Personal guide`, `Food court`],
-    "restaurant": [`Choose table`, `Parking`, `Early Access`],
+    "flight": [`choose-seats`, `switch-to-comfort-class`, `insurance`, `add-meal`, `add-luggage`],
+    'check-in': [`choose-room`, `spa-access`, `switch-to-comfort-class`],
+    "sightseeing": [`travel-by-bus`, `personal-guide`, `food-court`],
+    "restaurant": [`choose-table`, `parking`, `early-access`],
   },
-  places: [`Rome`, `Milan`, `Barcelona`, `Madrid`, `Marseille`, `Lyon`, `Houston`, `Chicago`]
+  places: [`Rome`, `Milan`, `Barcelona`, `Madrid`, `Marseille`, `Lyon`, `Houston`, `Chicago`],
+  types: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`]
 };

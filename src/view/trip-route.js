@@ -2,7 +2,7 @@ import AbstractView from "./abstract.js";
 import dayjs from 'dayjs';
 
 const createTripRouteTemplate = (events) => {
-  const eventRoutes = [...new Set([...events.map((event) => event.place.name)])];
+  const eventRoutes = [...new Set([...events.map((event) => event.placeName)])];
   const eventStartDate = events[0].date.start;
   const eventEndDate = events[events.length - 1].date.end;
 

@@ -8,7 +8,7 @@ const generateType = () => {
   return Object.keys(eventData.offers)[getRandomInteger(0, Object.keys(eventData.offers).length - 1)];
 };
 
-const generateName = () => {
+const generatePlaceName = () => {
   return eventData.places[getRandomInteger(0, eventData.places.length - 1)];
 };
 
@@ -60,31 +60,29 @@ const generateDates = () => {
 };
 
 export const generateOffers = (type) => {
-  const offersList = eventData.offers[type.toLowerCase()];
+
+  const offersList = eventData.offers[type];
 
   if (offersList.length === 0) {
     return null;
   }
 
-  const offers = new Set();
+  const offers = {};
 
-  for (let i = 0; i < offersList.length; i++) {
-    const offer = {};
-    offer.name = offersList[i];
-    offer.price = getRandomInteger(0, 50);
-    offer.isActive = Boolean(getRandomInteger(0, 1));
-    offers.add(offer);
-  }
-
-  return [...offers];
+  offersList.forEach((place) => {
+    offers[place] = {};
+    offers[place].price = getRandomInteger(0, 50);
+    offers[place].isActive = Boolean(getRandomInteger(0, 1));
+  });
+  return offers;
 };
 
 export const generateEvent = () => {
   const id = generateId();
   const type = generateType();
-  const name = generateName();
-  const text = generateDescriptionText();
-  const images = generateDescriptionImages();
+  const placeName = generatePlaceName();
+  const placeText = generateDescriptionText();
+  const placeImages = generateDescriptionImages();
   const date = generateDates();
   const offers = generateOffers(type);
   const price = getRandomInteger(15, 500);
@@ -94,11 +92,9 @@ export const generateEvent = () => {
     id,
     type,
     offers,
-    place: {
-      name,
-      text,
-      images,
-    },
+    placeName,
+    placeText,
+    placeImages,
     date,
     price,
     isFavourite,
