@@ -44,7 +44,7 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _sortTasks(sortType) {
+  _sortEvents(sortType) {
 
     switch (sortType) {
       case SortType.TIME:
@@ -65,14 +65,25 @@ export default class Trip {
       return;
     }
 
-    this._sortTasks(sortType);
+    this._sortEvents(sortType);
     this._clearEvents();
     this._renderEvents();
+  }
+
+  _clearEvents() {
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
   }
 
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+  }
+
+  _renderEventEmpty() {
+    render(this._tripContainer, this._eventEmptyComponent);
   }
 
   _renderEvent(event) {
@@ -83,17 +94,6 @@ export default class Trip {
 
   _renderEvents() {
     this._events.forEach((event) => this._renderEvent(event));
-  }
-
-  _renderEventEmpty() {
-    render(this._tripContainer, this._eventEmptyComponent);
-  }
-
-  _clearEvents() {
-    Object
-      .values(this._eventPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._eventPresenter = {};
   }
 
   _renderTrip() {

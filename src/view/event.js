@@ -3,20 +3,21 @@ import {getDateTimeFormat, getEventDuration} from '../utils/event';
 import AbstractView from "./abstract.js";
 
 const renderOffers = (offers) => {
+  const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
   return `<h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-    ${offers.map(({name, price}) => {
+  ${activeOffers.map(([name, param]) => {
     return `<li class="event__offer">
         <span class="event__offer-title">${name}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${price}</span>
+        <span class="event__offer-price">${param.price}</span>
       </li>`;
   }).join(``)}
   </ul>`;
 };
 
 const createEventTemplate = (eventItem) => {
-  const {event, date, price, offers, isFavourite} = eventItem;
+  const {type, placeName, date, price, offers, isFavourite} = eventItem;
 
   const shortDate = dayjs(date.start).format(`MMM DD`);
 
@@ -33,9 +34,9 @@ const createEventTemplate = (eventItem) => {
     <div class="event">
       <time class="event__date" datetime=${getDateTimeFormat(date.start, false)}>${shortDate}</time>
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${event.type} ${event.name}</h3>
+      <h3 class="event__title">${type} ${placeName}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${getDateTimeFormat(date.start, true)}>${dateStart}</time>

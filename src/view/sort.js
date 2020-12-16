@@ -41,12 +41,12 @@ export default class Sort extends AbstractView {
     return createSortTemplate();
   }
 
-  _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `LABEL`) {
+  _sortTypeChangeHandler({target}) {
+    if (target.tagName !== `LABEL`) {
       return;
     }
 
-    this._callback.sortTypeChange(evt.target.dataset.sortType);
+    this._callback.sortTypeChange(target.dataset.sortType);
   }
 
   setSortTypeChangeHandler(callback) {
