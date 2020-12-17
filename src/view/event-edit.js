@@ -1,7 +1,10 @@
-import SmartView from "./smart.js";
 import dayjs from 'dayjs';
+import flatpickr from "flatpickr";
+import SmartView from "./smart.js";
 import {eventData} from '../mock/eventData';
 import {generateOffers, generateDescriptionText, generateDescriptionImages} from '../mock/event';
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
   type: `taxi`,
@@ -134,6 +137,7 @@ export default class EventEdit extends SmartView {
     super();
     this._event = event;
     this._data = EventEdit.parseEventToData(event);
+    this._datepicker = null;
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
@@ -141,8 +145,11 @@ export default class EventEdit extends SmartView {
     this._placeToggleHandler = this._placeToggleHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._offerChangeHandler = this._offerChangeHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepicker();
   }
 
   reset(event) {
@@ -157,8 +164,38 @@ export default class EventEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setSubmitHandler(this._callback.submit);
     this.setRollupClickHandler(this._callback.rollupClick);
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    if (this._data.date.start) {
+      this._datepicker = flatpickr(
+          this.getElement().querySelector(`#event-start-time-1`),
+          {
+            dateFormat: `d/m/Y H:i`,
+            defaultDate: this._data.dueDate,
+            onChange: this._startDateChangeHandler
+          }
+      );
+    }
+
+    if (this._data.date.end) {
+      this._datepicker = flatpickr(
+          this.getElement().querySelector(`#event-end-time-1`),
+          {
+            dateFormat: `d/m/Y H:i`,
+            defaultDate: this._data.dueDate,
+            onChange: this._endDateChangeHandler
+          }
+      );
+    }
   }
 
   _setInnerHandlers() {
@@ -209,6 +246,30 @@ export default class EventEdit extends SmartView {
         {
           price: evt.target.value,
         }, true);
+  }
+
+  _startDateChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+          {},
+          this._data.date,
+          {
+            start: dayjs(userDate).hour(23).minute(59).second(59).toDate(),
+          }
+      ),
+    });
+  }
+
+  _endDateChangeHandler([userDate]) {
+    this.updateData({
+      date: Object.assign(
+          {},
+          this._data.date,
+          {
+            end: dayjs(userDate).hour(23).minute(59).second(59).toDate(),
+          }
+      ),
+    });
   }
 
   _offerChangeHandler(evt) {
