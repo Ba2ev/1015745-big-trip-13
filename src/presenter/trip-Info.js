@@ -4,23 +4,29 @@ import TripRouteView from "../view/trip-route.js";
 import TripCostView from "../view/trip-cost.js";
 
 export default class TripInfo {
-  constructor(tripInfoContainer) {
+  constructor(tripInfoContainer, eventsModel) {
     this._tripInfoContainer = tripInfoContainer;
-
-    this._events = [];
+    this._eventsModel = eventsModel;
 
     this._tripInfoComponent = new TripInfoView();
     this._tripRouteComponent = null;
     this._tripCostComponent = null;
   }
 
-  init(events) {
-    this._events = events;
+  init() {
+    const events = this._eventsModel.getEvents();
 
-    this._tripRouteComponent = new TripRouteView(this._events);
-    this._tripCostComponent = new TripCostView(this._events);
+    if (events.length === 0) {
+      return;
+    }
 
-    this._renderTripInfo();
+    this._tripRouteComponent = new TripRouteView(events);
+    this._tripCostComponent = new TripCostView(events);
+
+    render(this._tripInfoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+
+    this._renderTripRoute();
+    this._renderTripCost();
   }
 
   _renderTripRoute() {
@@ -29,12 +35,5 @@ export default class TripInfo {
 
   _renderTripCost() {
     render(this._tripInfoComponent, this._tripCostComponent);
-  }
-
-  _renderTripInfo() {
-    render(this._tripInfoContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
-
-    this._renderTripRoute();
-    this._renderTripCost();
   }
 }

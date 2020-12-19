@@ -1,3 +1,4 @@
+import he from 'he';
 import dayjs from 'dayjs';
 import {getDateTimeFormat, getEventDuration} from '../utils/event';
 import AbstractView from "./abstract.js";
@@ -46,7 +47,7 @@ const createEventTemplate = (eventItem) => {
         <p class="event__duration">${duration}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${price}</span>
+        &euro;&nbsp;<span class="event__price-value">${he.encode(String(price))}</span>
       </p>
       ${offersTemplate}
       <button class="event__favorite-btn ${favouriteClass}" type="button">

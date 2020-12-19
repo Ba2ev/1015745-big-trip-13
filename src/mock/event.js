@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {eventData} from './eventData';
 import {getRandomInteger} from '../utils/common.js';
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateType = () => {
   return Object.keys(eventData.offers)[getRandomInteger(0, Object.keys(eventData.offers).length - 1)];

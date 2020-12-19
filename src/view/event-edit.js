@@ -1,3 +1,4 @@
+import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
 import SmartView from "./smart.js";
@@ -9,11 +10,9 @@ import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 const BLANK_EVENT = {
   type: `taxi`,
   offers: null,
-  place: {
-    name: ``,
-    text: ``,
-    images: null,
-  },
+  placeName: ``,
+  placeText: ``,
+  placeImages: null,
   date: {
     start: ``,
     end: ``,
@@ -94,7 +93,7 @@ const createEventEditTemplate = (data) => {
           <label class="event__label event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${placeName}" list="destination-list-1">
+          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${placeName}" list="destination-list-1" readonly>
           ${placeList}
         </div>
 
@@ -111,7 +110,7 @@ const createEventEditTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(price))}">
         </div>
 
         <button class="event__save-btn btn btn--blue" type="submit">Save</button>
@@ -141,6 +140,7 @@ export default class EventEdit extends SmartView {
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._placeToggleHandler = this._placeToggleHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
@@ -150,6 +150,15 @@ export default class EventEdit extends SmartView {
 
     this._setInnerHandlers();
     this._setDatepicker();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   reset(event) {
@@ -167,6 +176,7 @@ export default class EventEdit extends SmartView {
     this._setDatepicker();
     this.setSubmitHandler(this._callback.submit);
     this.setRollupClickHandler(this._callback.rollupClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setDatepicker() {
@@ -180,7 +190,7 @@ export default class EventEdit extends SmartView {
           this.getElement().querySelector(`#event-start-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
-            defaultDate: this._data.dueDate,
+            defaultDate: this._data.start,
             onChange: this._startDateChangeHandler
           }
       );
@@ -191,7 +201,7 @@ export default class EventEdit extends SmartView {
           this.getElement().querySelector(`#event-end-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
-            defaultDate: this._data.dueDate,
+            defaultDate: this._data.end,
             onChange: this._endDateChangeHandler
           }
       );
@@ -296,6 +306,16 @@ export default class EventEdit extends SmartView {
     this._callback.submit(EventEdit.parseDataToEvent(this._data));
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
+  }
+
   setRollupClickHandler(callback) {
     this._callback.rollupClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupClickHandler);
@@ -307,7 +327,6 @@ export default class EventEdit extends SmartView {
   }
 
   static parseEventToData(event) {
-
     return Object.assign(
         {},
         event,

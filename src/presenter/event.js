@@ -1,4 +1,6 @@
+import {UserAction, UpdateType} from "../const.js";
 import {render, replace, remove} from "../utils/render.js";
+import {isDatesEqual} from "../utils/event.js";
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
 
@@ -23,6 +25,7 @@ export default class Event {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleRollDownClick = this._handleRollDownClick.bind(this);
     this._handleRollUpClick = this._handleRollUpClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -40,6 +43,7 @@ export default class Event {
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setRollupClickHandler(this._handleRollUpClick);
     this._eventEditComponent.setSubmitHandler(this._handleFormSubmit);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventListContainer, this._eventComponent);
@@ -82,19 +86,6 @@ export default class Event {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleRollDownClick() {
-    this._replaceEventToForm();
-  }
-
-  _handleRollUpClick() {
-    this._replaceFormToEvent();
-  }
-
-  _handleFormSubmit(event) {
-    this._changeData(event);
-    this._replaceFormToEvent();
-  }
-
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
@@ -103,8 +94,14 @@ export default class Event {
     }
   }
 
+  _handleRollDownClick() {
+    this._replaceEventToForm();
+  }
+
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._event,
@@ -112,6 +109,27 @@ export default class Event {
               isFavourite: !this._event.isFavourite
             }
         )
+    );
+  }
+
+  _handleRollUpClick() {
+    this._replaceFormToEvent();
+  }
+
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._event.dueDate, update.dueDate);
+    this._changeData(
+        UserAction.UPDATE_EVENT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update);
+    this._replaceFormToEvent();
+  }
+
+  _handleDeleteClick(event) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        event
     );
   }
 }
