@@ -1,4 +1,4 @@
-import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
+import {SortType, UpdateType, UserAction} from "../const.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortEventDate, sortEventTime, sortEventPrice} from "../utils/event.js";
 import {filter} from "../utils/filter.js";
@@ -26,21 +26,29 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
   }
 
   init() {
     render(this._tripContainer, this._eventListComponent);
+
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderTrip();
   }
 
-  createEvent() {
-    this._currentSortType = SortType.DATE;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+  destroy() {
+    this._clearTrip({resetSortType: true});
+
+    remove(this._eventListComponent);
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createEvent(callback) {
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {
