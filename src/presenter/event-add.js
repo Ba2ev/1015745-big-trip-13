@@ -1,13 +1,13 @@
 import EventAddView from "../view/event-add.js";
+import EventAddBtnView from "../view/event-add-btn.js";
 import {generateId} from "../mock/event.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class EventNew {
-  constructor(eventListContainer, changeData, addEventBtn) {
+  constructor(eventListContainer, changeData) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
-    this._addEventBtn = addEventBtn;
 
     this._eventNewComponent = null;
 
@@ -21,7 +21,6 @@ export default class EventNew {
       return;
     }
 
-    this._addEventBtn.disable();
     this._eventNewComponent = new EventAddView();
     this._eventNewComponent.setSubmitHandler(this._handleFormSubmit);
     this._eventNewComponent.setDeleteClickHandler(this._handleDeleteClick);
@@ -41,7 +40,7 @@ export default class EventNew {
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
 
-    this._addEventBtn.enable();
+    EventAddBtnView.enable();
   }
 
   _handleFormSubmit(event) {

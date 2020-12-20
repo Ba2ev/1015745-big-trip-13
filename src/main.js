@@ -22,15 +22,19 @@ const siteHeaderTripElement = document.querySelector(`.trip-main`);
 const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
 const siteMainTripElement = document.querySelector(`.trip-events`);
 
-const eventAddBtnView = new EventAddBtnView();
-
 const tripInfoPresenter = new TripInfoPresenter(siteHeaderTripElement, eventsModel);
 const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel);
-const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, eventAddBtnView);
+const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel);
 
 render(siteHeaderControlsElement, new MenuView(), RenderPosition.AFTERBEGIN);
-render(siteHeaderTripElement, eventAddBtnView);
+render(siteHeaderTripElement, new EventAddBtnView());
 
 tripInfoPresenter.init();
 filterPresenter.init();
 tripPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createEvent();
+  EventAddBtnView.disable();
+});

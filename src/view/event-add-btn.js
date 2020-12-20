@@ -7,30 +7,16 @@ const createEventAddBtnTemplate = () => {
 };
 
 export default class EventAddBtn extends AbstractView {
-  constructor() {
-    super();
 
-    this._btnClickHandler = this._btnClickHandler.bind(this);
-  }
   getTemplate() {
     return createEventAddBtnTemplate();
   }
 
-  enable() {
-    this.getElement().disabled = false;
+  static enable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 
-  disable() {
-    this.getElement().disabled = true;
-  }
-
-  _btnClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.click();
-  }
-
-  setBtnClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement(`.trip-main__event-add-btn`).addEventListener(`click`, this._btnClickHandler);
+  static disable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
   }
 }
