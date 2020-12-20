@@ -2,6 +2,21 @@ import FilterView from "../view/filter.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import {FilterType, UpdateType} from "../const.js";
 
+const filters = [
+  {
+    type: FilterType.EVERYTHING,
+    name: `everything`,
+  },
+  {
+    type: FilterType.FUTURE,
+    name: `future`,
+  },
+  {
+    type: FilterType.PAST,
+    name: `past`,
+  },
+];
+
 export default class Filter {
   constructor(filterContainer, filterModel) {
     this._filterContainer = filterContainer;
@@ -20,7 +35,6 @@ export default class Filter {
   init() {
     this._currentFilter = this._filterModel.getFilter();
 
-    const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
@@ -45,23 +59,5 @@ export default class Filter {
     }
 
     this._filterModel.setFilter(UpdateType.MAJOR, filterType);
-  }
-
-  _getFilters() {
-
-    return [
-      {
-        type: FilterType.EVERYTHING,
-        name: `everything`,
-      },
-      {
-        type: FilterType.FUTURE,
-        name: `future`,
-      },
-      {
-        type: FilterType.PAST,
-        name: `past`,
-      },
-    ];
   }
 }

@@ -120,7 +120,7 @@ const createEventAddTemplate = (data) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input event__input--price" id="event-price-1" type="number" name="event-price" min="0" value="${price}">
         </div>
 
         <button class="event__save-btn btn btn--blue" type="submit">Save</button>
@@ -239,6 +239,14 @@ export default class EventAdd extends SmartView {
 
   _placeToggleHandler(evt) {
     evt.preventDefault();
+
+    const newPlace = evt.target.value;
+    if (!eventData.places.includes(newPlace)) {
+      evt.target.setCustomValidity(`Данного варианта нет в списке`);
+      evt.target.reportValidity();
+      return;
+    }
+
     const placeText = generateDescriptionText();
     const placeImages = generateDescriptionImages();
     this.updateData(
@@ -253,6 +261,8 @@ export default class EventAdd extends SmartView {
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
+    evt.target.reportValidity();
+
     this.updateData(
         {
           price: evt.target.value,

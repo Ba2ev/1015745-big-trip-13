@@ -9,10 +9,11 @@ import EventPresenter from "./event.js";
 import EventNewPresenter from "./event-add.js";
 
 export default class Trip {
-  constructor(tripContainer, eventsModel, filterModel) {
+  constructor(tripContainer, eventsModel, filterModel, addEventBtn) {
     this._tripContainer = tripContainer;
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
+    this._addEventBtn = addEventBtn;
 
     this._eventPresenter = {};
     this._currentSortType = SortType.DATE;
@@ -21,6 +22,7 @@ export default class Trip {
     this._eventEmptyComponent = null;
     this._eventListComponent = new EventListView();
 
+    this._handleEventCreate = this._handleEventCreate.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -29,15 +31,16 @@ export default class Trip {
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
+    this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction, this._addEventBtn);
   }
 
   init() {
     render(this._tripContainer, this._eventListComponent);
+    this._addEventBtn.setBtnClickHandler(this._handleEventCreate);
     this._renderTrip();
   }
 
-  createEvent() {
+  _createEvent() {
     this._currentSortType = SortType.DATE;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._eventNewPresenter.init();
@@ -55,6 +58,10 @@ export default class Trip {
         return filtredEvents.sort(sortEventPrice);
     }
     return filtredEvents.sort(sortEventDate);
+  }
+
+  _handleEventCreate() {
+    this._createEvent();
   }
 
   _handleViewAction(actionType, updateType, update) {

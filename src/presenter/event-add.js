@@ -4,9 +4,10 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 export default class EventNew {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, addEventBtn) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
+    this._addEventBtn = addEventBtn;
 
     this._eventNewComponent = null;
 
@@ -19,6 +20,8 @@ export default class EventNew {
     if (this._eventNewComponent !== null) {
       return;
     }
+
+    this._addEventBtn.disable();
     this._eventNewComponent = new EventAddView();
     this._eventNewComponent.setSubmitHandler(this._handleFormSubmit);
     this._eventNewComponent.setDeleteClickHandler(this._handleDeleteClick);
@@ -37,6 +40,8 @@ export default class EventNew {
     this._eventNewComponent = null;
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+
+    this._addEventBtn.enable();
   }
 
   _handleFormSubmit(event) {
