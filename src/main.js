@@ -1,10 +1,12 @@
+import {MenuItem, UpdateType, FilterType} from "./const.js";
 import {getRandomInteger} from './utils/common.js';
-import {render, RenderPosition} from './utils/render';
+import {render, RenderPosition, remove} from './utils/render';
 import {generateEvent} from './mock/event';
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 import MenuView from "./view/menu.js";
 import EventAddBtnView from "./view/event-add-btn.js";
+import StatisticsView from "./view/statistics.js";
 import TripInfoPresenter from "./presenter/trip-Info.js";
 import FilterPresenter from "./presenter/filter.js";
 import TripPresenter from "./presenter/trip.js";
@@ -22,14 +24,53 @@ const siteHeaderTripElement = document.querySelector(`.trip-main`);
 const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
 const siteMainTripElement = document.querySelector(`.trip-events`);
 
-const eventAddBtnView = new EventAddBtnView();
+const siteMenuComponent = new MenuView();
+const eventAddBtnComponent = new EventAddBtnView();
 
 const tripInfoPresenter = new TripInfoPresenter(siteHeaderTripElement, eventsModel);
 const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel);
-const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, eventAddBtnView);
+const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel);
 
-render(siteHeaderControlsElement, new MenuView(), RenderPosition.AFTERBEGIN);
-render(siteHeaderTripElement, eventAddBtnView);
+render(siteHeaderControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
+render(siteHeaderTripElement, eventAddBtnComponent);
+
+let statisticsComponent = null;
+
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      remove(statisticsComponent);
+      tripPresenter.destroy();
+      filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+      tripPresenter.init();
+      siteMenuComponent.setMenuItem(MenuItem.TABLE);
+      break;
+    case MenuItem.STATS:
+      tripPresenter.destroy();
+      statisticsComponent = new StatisticsView(eventsModel.getEvents());
+      render(siteMainTripElement, statisticsComponent, RenderPosition.BEFOREEND);
+      siteMenuComponent.setMenuItem(MenuItem.STATS);
+      break;
+  }
+};
+
+const handleEventNewFormClose = () => {
+  EventAddBtnView.enable();
+  siteMenuComponent.setMenuItem(MenuItem.TABLE);
+};
+
+const handleAddBtnClick = () => {
+  remove(statisticsComponent);
+  tripPresenter.destroy();
+  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+  tripPresenter.init();
+  tripPresenter.createEvent(handleEventNewFormClose);
+  EventAddBtnView.disable();
+  siteMenuComponent.setMenuItem(MenuItem.TABLE);
+};
+
+siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
 
 tripInfoPresenter.init();
 filterPresenter.init();

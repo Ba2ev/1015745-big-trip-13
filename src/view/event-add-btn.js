@@ -10,27 +10,28 @@ export default class EventAddBtn extends AbstractView {
   constructor() {
     super();
 
-    this._btnClickHandler = this._btnClickHandler.bind(this);
+    this._addBtnClickHandler = this._addBtnClickHandler.bind(this);
   }
+
   getTemplate() {
     return createEventAddBtnTemplate();
   }
 
-  enable() {
-    this.getElement().disabled = false;
+  static enable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
   }
 
-  disable() {
-    this.getElement().disabled = true;
+  static disable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
   }
 
-  _btnClickHandler(evt) {
+  _addBtnClickHandler(evt) {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.btnClick();
   }
 
-  setBtnClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement(`.trip-main__event-add-btn`).addEventListener(`click`, this._btnClickHandler);
+  setAddBtnClickHandler(callback) {
+    this._callback.btnClick = callback;
+    this.getElement().addEventListener(`click`, this._addBtnClickHandler);
   }
 }
