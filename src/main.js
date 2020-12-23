@@ -1,7 +1,8 @@
-import {MenuItem, UpdateType, FilterType} from "./const.js";
+import {MenuItem, UpdateType, FilterType, ApiParams} from "./const.js";
 import {getRandomInteger} from './utils/common.js';
 import {render, RenderPosition, remove} from './utils/render';
 import {generateEvent} from './mock/event';
+import Api from './api';
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 import MenuView from "./view/menu.js";
@@ -13,10 +14,12 @@ import TripPresenter from "./presenter/trip.js";
 
 const eventCount = getRandomInteger(2, 20);
 
-const events = new Array(eventCount).fill().map(generateEvent).sort((a, b) => a.date.start - b.date.start);
+const eventsMocks = new Array(eventCount).fill().map(generateEvent).sort((a, b) => a.date.start - b.date.start);
+
+const api = new Api(ApiParams.END_POINT, ApiParams.AUTHORIZATION);
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
+eventsModel.setEvents(eventsMocks);
 
 const filterModel = new FilterModel();
 
@@ -75,3 +78,8 @@ eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
 tripInfoPresenter.init();
 filterPresenter.init();
 tripPresenter.init();
+
+api.getEvents().then((events) => {
+  eventsModel.setEvents(events);
+  console.log(eventsModel.getEvents());
+});

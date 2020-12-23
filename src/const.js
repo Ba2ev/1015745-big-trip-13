@@ -1,3 +1,8 @@
+export const ApiParams = {
+  AUTHORIZATION: `Basic 98gr34hf948fhglkeg8`,
+  END_POINT: `https://13.ecmascript.pages.academy/big-trip/`,
+};
+
 export const SortType = {
   DATE: `date`,
   TIME: `time`,
