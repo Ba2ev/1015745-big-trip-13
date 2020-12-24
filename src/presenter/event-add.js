@@ -1,6 +1,6 @@
 import EventAddView from "../view/event-add.js";
 import EventAddBtnView from "../view/event-add-btn.js";
-import {generateId} from "../mock/event.js";
+import {generateId} from "../utils/event.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 

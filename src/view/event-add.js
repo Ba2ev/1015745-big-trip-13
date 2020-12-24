@@ -1,14 +1,13 @@
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
+import Store from '../store';
 import SmartView from "./smart.js";
-import {eventData} from '../mock/eventData';
-import {generateOffers, generateDescriptionText, generateDescriptionImages} from '../mock/event';
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
   type: `taxi`,
-  offers: null,
+  offers: [],
   placeName: ``,
   placeText: null,
   placeImages: null,
@@ -21,10 +20,11 @@ const BLANK_EVENT = {
 };
 
 const renderTypeList = (dataType) => {
+  const types = Store.getOffers().map((offer) => offer.type);
   return `<div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
-      ${eventData.types.map((type) => {
+      ${types.map((type) => {
     return `<div class="event__type-item">
         <input id="event-type-${type}-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}" ${type === dataType ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
@@ -35,22 +35,26 @@ const renderTypeList = (dataType) => {
 };
 
 const renderPlaceList = () => {
+  const places = Store.getPlaces().map((place) => place.name);
   return `<datalist id="destination-list-1">
-    ${eventData.places.map((item) => `<option value="${item}"></option>`).join(``)}
+    ${places.map((name) => `<option value="${name}"></option>`).join(``)}
   </datalist>`;
 };
 
-const renderOffersTemplate = (offers) => {
+const renderOffersTemplate = (activeType, activeOffers) => {
+  const currentOffersStore = Store.getOffers().find((store) => store.type === activeType);
   return `<section class="event__section event__section--offers">
   <h3 class="event__section-title event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
-  ${Object.entries(offers).map(([name, param]) => {
+  ${currentOffersStore.offers.map(({title, price}) => {
+    const classTitle = title.split(` `).join(`-`);
+    const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}" type="checkbox" name="event-offer-${name}" ${param.isActive ? `checked` : ``} data-value=${name} ">
-    <label class="event__offer-label" for="event-offer-${name}">
-      <span class="event__offer-title">${name.split(`-`).join(` `)}</span>
+    <input class="event__offer-checkbox visually-hidden" id="event-offer-${classTitle}" type="checkbox" name="event-offer-${classTitle}" ${isActiveOffer} data-value=${classTitle} ">
+    <label class="event__offer-label" for="event-offer-${classTitle}">
+      <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${param.price}</span>
+      <span class="event__offer-price">${price}</span>
     </label>
   </div>`;
   }).join(``)}
@@ -61,7 +65,7 @@ const renderOffersTemplate = (offers) => {
 const renderImagesList = (imageList) => {
   return `<div class="event__photos-container">
   <div class="event__photos-tape">
-    ${imageList.map((imageLink) => `<img class="event__photo" src="${imageLink}" alt="Event photo">`)}
+    ${imageList.map((image) => `<img class="event__photo" src="${image.src}" alt="${image.description}">`)}
   </div>
 </div>`;
 };
@@ -84,7 +88,7 @@ const createEventAddTemplate = (data) => {
   const placeList = renderPlaceList();
   const dateStart = dayjs(date.start).format(`DD/MM/YY HH:mm`);
   const dateEnd = dayjs(date.end).format(`DD/MM/YY HH:mm`);
-  const offersTemplate = isOffers ? renderOffersTemplate(offers) : ``;
+  const offersTemplate = isOffers ? renderOffersTemplate(type, offers) : ``;
   const destinationTemplate = !isText && !isImages ? `` : renderDestinationTemplate(placeText, placeImages);
 
   return `<li class="trip-events__item">
@@ -227,12 +231,14 @@ export default class EventAdd extends SmartView {
   }
 
   _typeToggleHandler(evt) {
-    const offers = generateOffers(evt.target.textContent);
+    const currentOffersStore = Store.getOffers().find((store) => store.type === evt.target.textContent);
+    const offers = currentOffersStore.offers;
+
     this.updateData(
         {
           type: evt.target.textContent,
-          offers,
-          isOffers: offers ? true : false,
+          offers: [],
+          isOffers: offers.length > 0 ? true : false,
         }
     );
   }
@@ -240,15 +246,17 @@ export default class EventAdd extends SmartView {
   _placeToggleHandler(evt) {
     evt.preventDefault();
 
-    const newPlace = evt.target.value;
-    if (!eventData.places.includes(newPlace)) {
+    const newPlace = Store.getPlaces().find((place) => place.name === evt.target.value);
+
+    if (!newPlace) {
       evt.target.setCustomValidity(`Данного варианта нет в списке`);
       evt.target.reportValidity();
       return;
     }
 
-    const placeText = generateDescriptionText();
-    const placeImages = generateDescriptionImages();
+    const placeText = newPlace.description;
+    const placeImages = newPlace.pictures;
+
     this.updateData(
         {
           placeName: evt.target.value,
@@ -294,17 +302,22 @@ export default class EventAdd extends SmartView {
   }
 
   _offerChangeHandler(evt) {
+    const activeOffers = this._data.offers;
+    const typeOffers = Store.getOffers().find((store) => store.type === this._data.type).offers;
+    const offerDataValue = evt.target.dataset.value.split(`-`).join(` `);
+    const currentOffer = typeOffers.find((offer) => offer.title === offerDataValue);
+    const equalOffer = this._data.offers.filter((offer) => offer.title === currentOffer.title);
+
+    if (equalOffer.length === 0) {
+      activeOffers.push(currentOffer);
+    } else {
+      const index = activeOffers.indexOf(currentOffer);
+      activeOffers.splice(index, 1);
+    }
+
     this.updateData({
-      offers: Object.assign(
-          {},
-          this._data.offers,
-          {[evt.target.dataset.value]: Object.assign(
-              {},
-              this._data.offers[evt.target.dataset.value],
-              {isActive: evt.target.checked}
-          )}
-      )}
-    );
+      offers: activeOffers,
+    });
   }
 
   _submitHandler(evt) {
@@ -332,7 +345,7 @@ export default class EventAdd extends SmartView {
         {},
         event,
         {
-          isOffers: event.offers !== null,
+          isOffers: event.offers.length > 0,
           isText: event.placeImages !== null,
           isImages: event.placeImages !== null,
         }

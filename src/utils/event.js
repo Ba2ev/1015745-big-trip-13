@@ -42,3 +42,5 @@ export const isEventPast = (date) => {
 export const isEventFuture = (date) => {
   return dayjs(date).diff(dayjs()) >= 0;
 };
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

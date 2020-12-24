@@ -4,20 +4,20 @@ import {getDateTimeFormat, getEventDuration} from '../utils/event';
 import AbstractView from "./abstract.js";
 
 const renderOffers = (offers) => {
-  const activeOffers = Object.entries(offers).filter(([, param]) => param.isActive);
   return `<h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-  ${activeOffers.map(([name, param]) => {
+  ${offers.map(({title, price}) => {
     return `<li class="event__offer">
-        <span class="event__offer-title">${name}</span>
+        <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
-        <span class="event__offer-price">${param.price}</span>
+        <span class="event__offer-price">${price}</span>
       </li>`;
   }).join(``)}
   </ul>`;
 };
 
 const createEventTemplate = (eventItem) => {
+
   const {type, placeName, date, price, offers, isFavourite} = eventItem;
 
   const shortDate = dayjs(date.start).format(`MMM DD`);
@@ -67,6 +67,7 @@ export default class Event extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
+
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
   }
