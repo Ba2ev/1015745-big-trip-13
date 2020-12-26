@@ -1,6 +1,7 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
+import {OfferTypes} from './../const';
 import Store from '../store';
 import SmartView from "./smart.js";
 
@@ -16,19 +17,18 @@ const BLANK_EVENT = {
     start: ``,
     end: ``,
   },
-  price: ``,
+  price: 0,
   isFavorite: false
 };
 
 const renderTypeList = (dataType) => {
-  const types = Store.getOffers().map((offer) => offer.type);
   return `<div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
-      ${types.map((type) => {
+      ${OfferTypes.map((type) => {
     return `<div class="event__type-item">
         <input id="event-type-${type}-1" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}" ${type === dataType ? `checked` : ``}>
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${type}</label>
+        <label class="event__type-label event__type-label--${type}" for="event-type-${type}-1" data-value="${type}">${type}</label>
       </div>`;
   }).join(``)}
     </fieldset>
@@ -43,15 +43,15 @@ const renderPlaceList = () => {
 };
 
 const renderOffersTemplate = (activeType, activeOffers) => {
-  const currentOffersStore = Store.getOffers().find((store) => store.type === activeType);
+  const {offers} = Store.getOffers().find((store) => store.type === activeType);
   return `<section class="event__section event__section--offers">
   <h3 class="event__section-title event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
-  ${currentOffersStore.offers.map(({title, price}) => {
+  ${offers.map(({title, price}) => {
     const classTitle = title.split(` `).join(`-`);
     const isActiveOffer = activeOffers.find((offer) => offer.title === title) ? `checked` : ``;
     return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox visually-hidden" id="event-offer-${classTitle}" type="checkbox" name="event-offer-${classTitle}" ${isActiveOffer} data-value=${classTitle} ">
+    <input class="event__offer-checkbox visually-hidden" id="event-offer-${classTitle}" type="checkbox" name="event-offer-${classTitle}" ${isActiveOffer} data-value="${title}">
     <label class="event__offer-label" for="event-offer-${classTitle}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
@@ -97,7 +97,7 @@ const createEventEditTemplate = (data) => {
           <label class="event__label event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${placeName}" list="destination-list-1">
+          <input class="event__input event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(placeName)}" list="destination-list-1">
           ${placeList}
         </div>
 
@@ -141,6 +141,7 @@ export default class EventEdit extends SmartView {
     this._event = event;
     this._data = EventEdit.parseEventToData(event);
     this._datepicker = null;
+    this._offersStore = Store.getOffers();
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
@@ -230,12 +231,11 @@ export default class EventEdit extends SmartView {
   }
 
   _typeToggleHandler(evt) {
-    const currentOffersStore = Store.getOffers().find((store) => store.type === evt.target.textContent);
-    const offers = currentOffersStore.offers;
+    const {type, offers} = this._offersStore.find((store) => store.type === evt.target.dataset.value);
 
     this.updateData(
         {
-          type: evt.target.textContent,
+          type,
           offers: [],
           isOffers: offers.length > 0 ? true : false,
         }
@@ -253,15 +253,12 @@ export default class EventEdit extends SmartView {
       return;
     }
 
-    const placeText = newPlace.description;
-    const placeImages = newPlace.pictures;
-
     this.updateData(
         {
-          placeName: evt.target.value,
-          placeText,
-          placeImages,
-          isImages: placeImages ? true : false,
+          placeName: newPlace.name,
+          placeText: newPlace.description,
+          placeImages: newPlace.pictures,
+          isImages: newPlace.pictures ? true : false,
         }
     );
   }
@@ -301,21 +298,15 @@ export default class EventEdit extends SmartView {
   }
 
   _offerChangeHandler(evt) {
-    const activeOffers = this._data.offers;
-    const typeOffers = Store.getOffers().find((store) => store.type === this._data.type).offers;
-    const offerDataValue = evt.target.dataset.value.split(`-`).join(` `);
-    const currentOffer = typeOffers.find((offer) => offer.title === offerDataValue);
-    const equalOffer = this._data.offers.filter((offer) => offer.title === currentOffer.title);
-
-    if (equalOffer.length === 0) {
-      activeOffers.push(currentOffer);
-    } else {
-      const index = activeOffers.indexOf(currentOffer);
-      activeOffers.splice(index, 1);
-    }
+    const offerName = evt.target.dataset.value;
+    const {offers} = this._offersStore.find((store) => store.type === this._data.type);
+    const currentOffer = offers.find((offer) => offer.title === offerName);
+    const currentOffers = !this._data.offers.find((offer) => offer.title === offerName) ?
+      [...this._data.offers.slice(), currentOffer] :
+      this._data.offers.filter((offer) => offer.title !== offerName);
 
     this.updateData({
-      offers: activeOffers,
+      offers: currentOffers,
     });
   }
 
@@ -361,7 +352,10 @@ export default class EventEdit extends SmartView {
   }
 
   static parseDataToEvent(data) {
-    let event = Object.assign({}, data);
+    let event = Object.assign(
+        {},
+        data,
+        {price: Number(data.price)});
 
     delete event.isOffers;
     delete event.isImages;

@@ -14,11 +14,10 @@ export default class TripInfo {
     this._tripCostComponent = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._eventsModel.addObserver(this._handleModelEvent);
-
     this._renderTripInfo();
   }
 

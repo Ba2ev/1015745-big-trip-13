@@ -1,7 +1,6 @@
 import {MenuItem, UpdateType, FilterType, ApiParams} from "./const.js";
 import {render, RenderPosition, remove} from './utils/render';
 import Api from './api';
-import Store from './store';
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 import MenuView from "./view/menu.js";
@@ -66,22 +65,14 @@ tripInfoPresenter.init();
 filterPresenter.init();
 tripPresenter.init();
 
-const whenEventsLoaded = api.getEvents();
-const whenOffersLoaded = api.getOffers();
-const whenPlacesLoaded = api.getPlaces();
-
-Promise.all([whenEventsLoaded, whenOffersLoaded, whenPlacesLoaded])
-  .then(([events, offers, places])=> {
-    Store.setOffers(offers);
-    Store.setPlaces(places);
+api.getAllData()
+  .then((events)=> {
     eventsModel.setEvents(UpdateType.INIT, events);
-    render(siteHeaderControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
-    render(siteHeaderTripElement, eventAddBtnComponent);
-    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-    eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
   })
   .catch(()=>{
     eventsModel.setEvents(UpdateType.INIT, []);
+  })
+  .finally(() => {
     render(siteHeaderControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
     render(siteHeaderTripElement, eventAddBtnComponent);
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);

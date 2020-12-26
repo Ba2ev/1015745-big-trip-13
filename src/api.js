@@ -1,3 +1,4 @@
+import Store from './store';
 import EventsModel from "./model/events.js";
 
 const Method = {
@@ -30,6 +31,15 @@ export default class Api {
   getPlaces() {
     return this._load({url: `destinations`})
       .then(Api.toJSON);
+  }
+
+  getAllData() {
+    return Promise.all([this.getEvents(), this.getOffers(), this.getPlaces()])
+    .then(([events, offers, places]) => {
+      Store.setOffers(offers);
+      Store.setPlaces(places);
+      return Promise.resolve(events);
+    });
   }
 
   updateEvents(event) {

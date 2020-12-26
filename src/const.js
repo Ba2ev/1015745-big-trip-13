@@ -1,6 +1,8 @@
+export const OfferTypes = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+
 export const ApiParams = {
   AUTHORIZATION: `Basic 98gr34hf948fhglkeg8`,
-  END_POINT: `https://13.ecmascript.pages.academy/big-trip/`,
+  END_POINT: `https://13.ecmascript.pages.academy/big-trip`,
 };
 
 export const SortType = {
