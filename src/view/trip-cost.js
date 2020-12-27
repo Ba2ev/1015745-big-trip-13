@@ -1,7 +1,10 @@
 import AbstractView from "./abstract.js";
 
 const createTripCostTemplate = (events) => {
-  const price = events.reduce((acc, event) => acc + event.price, 0);
+  const price = events.reduce((acc, event) => {
+    const offersPrice = event.offers !== null ? event.offers.reduce((sum, offer) => sum + offer.price, 0) : 0;
+    return acc + event.price + offersPrice;
+  }, 0);
   return `<p class="trip-info__cost">
     Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
   </p>`;

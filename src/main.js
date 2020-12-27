@@ -1,7 +1,6 @@
-import {MenuItem, UpdateType, FilterType} from "./const.js";
-import {getRandomInteger} from './utils/common.js';
+import {MenuItem, UpdateType, FilterType, ApiParams} from "./const.js";
 import {render, RenderPosition, remove} from './utils/render';
-import {generateEvent} from './mock/event';
+import Api from './api';
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 import MenuView from "./view/menu.js";
@@ -11,13 +10,9 @@ import TripInfoPresenter from "./presenter/trip-Info.js";
 import FilterPresenter from "./presenter/filter.js";
 import TripPresenter from "./presenter/trip.js";
 
-const eventCount = getRandomInteger(2, 20);
-
-const events = new Array(eventCount).fill().map(generateEvent).sort((a, b) => a.date.start - b.date.start);
+const api = new Api(ApiParams.END_POINT, ApiParams.AUTHORIZATION);
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
-
 const filterModel = new FilterModel();
 
 const siteHeaderTripElement = document.querySelector(`.trip-main`);
@@ -29,10 +24,7 @@ const eventAddBtnComponent = new EventAddBtnView();
 
 const tripInfoPresenter = new TripInfoPresenter(siteHeaderTripElement, eventsModel);
 const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel);
-const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel);
-
-render(siteHeaderControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
-render(siteHeaderTripElement, eventAddBtnComponent);
+const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, api);
 
 let statisticsComponent = null;
 
@@ -69,9 +61,20 @@ const handleAddBtnClick = () => {
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
 };
 
-siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
-eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
-
 tripInfoPresenter.init();
 filterPresenter.init();
 tripPresenter.init();
+
+api.getAllData()
+  .then((events)=> {
+    eventsModel.setEvents(UpdateType.INIT, events);
+  })
+  .catch(()=>{
+    eventsModel.setEvents(UpdateType.INIT, []);
+  })
+  .finally(() => {
+    render(siteHeaderControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
+    render(siteHeaderTripElement, eventAddBtnComponent);
+    siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+    eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
+  });

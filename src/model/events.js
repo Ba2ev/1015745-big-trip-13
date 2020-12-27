@@ -6,8 +6,9 @@ export default class Events extends Observer {
     this._events = [];
   }
 
-  setEvents(events) {
+  setEvents(updateType, events) {
     this._events = events.slice();
+    this._notify(updateType);
   }
 
   getEvents() {
@@ -52,5 +53,58 @@ export default class Events extends Observer {
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          date: {
+            start: event.date_from,
+            end: event.date_to,
+          },
+          isFavourite: event.is_favorite,
+          price: event.base_price,
+          placeName: event.destination.name,
+          placeText: event.destination.description,
+          placeImages: event.destination.pictures,
+        }
+    );
+
+    delete adaptedEvent.base_price;
+    delete adaptedEvent.date_from;
+    delete adaptedEvent.date_to;
+    delete adaptedEvent.destination;
+    delete adaptedEvent.is_favorite;
+
+    return adaptedEvent;
+  }
+
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          "date_from": event.date.start,
+          "date_to": event.date.end,
+          "destination": {
+            "name": event.placeName,
+            "description": event.placeText,
+            "pictures": event.placeImages
+          },
+          "is_favorite": event.isFavourite,
+          "base_price": event.price
+        }
+    );
+
+    delete adaptedEvent.date;
+    delete adaptedEvent.isFavourite;
+    delete adaptedEvent.placeImages;
+    delete adaptedEvent.placeName;
+    delete adaptedEvent.placeText;
+    delete adaptedEvent.price;
+
+    return adaptedEvent;
   }
 }

@@ -1,3 +1,10 @@
+export const OfferTypes = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+
+export const ApiParams = {
+  AUTHORIZATION: `Basic 98gr34hf948fhglkeg8`,
+  END_POINT: `https://13.ecmascript.pages.academy/big-trip`,
+};
+
 export const SortType = {
   DATE: `date`,
   TIME: `time`,
@@ -13,7 +20,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FilterType = {
