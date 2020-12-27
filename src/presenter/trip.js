@@ -6,7 +6,7 @@ import LoadingView from "../view/loading.js";
 import EventEmptyView from "../view/event-empty.js";
 import SortView from "../view/sort.js";
 import EventListView from "../view/event-list.js";
-import EventPresenter from "./event.js";
+import EventPresenter, {State as EventPresenterViewState} from "./event.js";
 import EventNewPresenter from "./event-add.js";
 
 export default class Trip {
@@ -66,21 +66,38 @@ export default class Trip {
       case SortType.PRICE:
         return filtredEvents.sort(sortEventPrice);
     }
+
     return filtredEvents.sort(sortEventDate);
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
+        this._eventPresenter[update.id].setViewState(EventPresenterViewState.SAVING);
         this._api.updateEvents(update).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
+        })
+        .catch(() => {
+          this._eventPresenter[update.id].setViewState(EventPresenterViewState.ABORTING);
         });
         break;
       case UserAction.ADD_EVENT:
-        this._eventsModel.addEvent(updateType, update);
+        this._eventNewPresenter.setSaving();
+        this._api.addEvent(update).then((response) => {
+          this._eventsModel.addEvent(updateType, response);
+        })
+        .catch(() => {
+          this._eventNewPresenter.setAborting();
+        });
         break;
       case UserAction.DELETE_EVENT:
-        this._eventsModel.deleteEvent(updateType, update);
+        this._eventPresenter[update.id].setViewState(EventPresenterViewState.DELETING);
+        this._api.deleteEvent(update).then(() => {
+          this._eventsModel.deleteEvent(updateType, update);
+        })
+        .catch(() => {
+          this._eventPresenter[update.id].setViewState(EventPresenterViewState.ABORTING);
+        });
         break;
     }
   }

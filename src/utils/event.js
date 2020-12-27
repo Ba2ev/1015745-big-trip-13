@@ -17,7 +17,7 @@ export const getEventDuration = (dateStart, dateEnd) => {
 };
 
 export const sortEventDate = (eventA, eventB) => {
-  return eventA.date.start - eventB.date.start;
+  return new Date(eventA.date.start) - new Date(eventB.date.start);
 };
 
 export const sortEventTime = (eventA, eventB) => {
@@ -31,8 +31,8 @@ export const sortEventPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export const isDatesEqual = (dateA, dateB) => {
-  return (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, `D`);
+export const isDatesEqual = (prevEvent, newEvent) => {
+  return dayjs(prevEvent.date.start).isSame(newEvent.date.start, `D`) && dayjs(prevEvent.date.end).isSame(newEvent.date.end, `D`);
 };
 
 export const isEventPast = (date) => {
@@ -42,5 +42,3 @@ export const isEventPast = (date) => {
 export const isEventFuture = (date) => {
   return dayjs(date).diff(dayjs()) >= 0;
 };
-
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

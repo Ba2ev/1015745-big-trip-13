@@ -18,7 +18,7 @@ const BLANK_EVENT = {
     end: new Date(),
   },
   price: 0,
-  isFavorite: false
+  isFavourite: false
 };
 
 const renderTypeList = (dataType) => {
@@ -83,7 +83,7 @@ const renderDestinationTemplate = (placeText, placeImages) => {
 </section>`;
 };
 const createEventAddTemplate = (data) => {
-  const {type, date, price, offers, placeName, placeText, placeImages, isOffers, isText, isImages} = data;
+  const {type, date, price, offers, placeName, placeText, placeImages, isOffers, isText, isImages, isDisabled, isSaving, isDeleting} = data;
 
   const typeList = renderTypeList(type);
   const placeList = renderPlaceList();
@@ -128,8 +128,8 @@ const createEventAddTemplate = (data) => {
           <input class="event__input event__input--price" id="event-price-1" type="number" name="event-price" min="0" value="${he.encode(String(price))}">
         </div>
 
-        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__save-btn btn btn--blue" type="submit" ${isDisabled ? `disabled` : ``}>${isSaving ? `saving...` : `save`}</button>
+        <button class="event__reset-btn" type="reset"${isDisabled ? `disabled` : ``}>${isDeleting ? `canceling...` : `cancel`}</button>
       </header>
       <section class="event__details">
         ${offersTemplate}
@@ -340,6 +340,9 @@ export default class EventAdd extends SmartView {
           isOffers: event.offers.length > 0,
           isText: event.placeImages !== null,
           isImages: event.placeImages !== null,
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
         }
     );
   }
@@ -353,6 +356,9 @@ export default class EventAdd extends SmartView {
     delete event.isOffers;
     delete event.isText;
     delete event.isImages;
+    delete event.isDisabled;
+    delete event.isSaving;
+    delete event.isDeleting;
 
     return event;
   }
