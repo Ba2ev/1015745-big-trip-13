@@ -1,4 +1,5 @@
 import {UpdateType} from "../const.js";
+import {sortEventDate} from "../utils/event.js";
 import {render, RenderPosition} from "../utils/render.js";
 import TripInfoView from "../view/trip-info.js";
 import TripRouteView from "../view/trip-route.js";
@@ -42,7 +43,7 @@ export default class TripInfo {
       return;
     }
 
-    const events = this._eventsModel.getEvents();
+    const events = this._eventsModel.getEvents().sort(sortEventDate);
 
     this._tripInfoComponent = new TripInfoView();
     this._tripRouteComponent = new TripRouteView(events);

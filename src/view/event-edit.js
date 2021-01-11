@@ -18,7 +18,7 @@ const BLANK_EVENT = {
     end: ``,
   },
   price: 0,
-  isFavorite: false
+  isFavourite: false
 };
 
 const renderTypeList = (dataType) => {
@@ -72,7 +72,7 @@ const renderImagesList = (imageList) => {
 };
 
 const createEventEditTemplate = (data) => {
-  const {type, date, price, offers, placeName, placeText, placeImages, isOffers, isImages} = data;
+  const {type, date, price, offers, placeName, placeText, placeImages, isOffers, isImages, isDisabled, isSaving, isDeleting} = data;
 
   const typeList = renderTypeList(type);
   const placeList = renderPlaceList();
@@ -103,10 +103,10 @@ const createEventEditTemplate = (data) => {
 
         <div class="event__field-group event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}">
+          <input class="event__input event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateStart}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}">
+          <input class="event__input event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateEnd}">
         </div>
 
         <div class="event__field-group event__field-group--price">
@@ -117,8 +117,8 @@ const createEventEditTemplate = (data) => {
           <input class="event__input event__input--price" id="event-price-1" type="number" name="event-price" min="0" value="${he.encode(String(price))}">
         </div>
 
-        <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn btn btn--blue" type="submit" ${isDisabled ? `disabled` : ``}>${isSaving ? `saving...` : `save`}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? `disabled` : ``}>${isDeleting ? `deleting...` : `delete`}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -347,6 +347,9 @@ export default class EventEdit extends SmartView {
         {
           isOffers: event.offers.length > 0,
           isImages: event.placeImages !== null,
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
         }
     );
   }
@@ -359,6 +362,9 @@ export default class EventEdit extends SmartView {
 
     delete event.isOffers;
     delete event.isImages;
+    delete event.isDisabled;
+    delete event.isSaving;
+    delete event.isDeleting;
 
     return event;
   }

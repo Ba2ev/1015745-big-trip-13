@@ -1,6 +1,5 @@
 import EventAddView from "../view/event-add.js";
 import EventAddBtnView from "../view/event-add-btn.js";
-import {generateId} from "../utils/event.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
@@ -49,13 +48,31 @@ export default class EventNew {
     EventAddBtnView.enable();
   }
 
+  setSaving() {
+    this._eventNewComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventNewComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._eventNewComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(event) {
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, event)
+        event
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
