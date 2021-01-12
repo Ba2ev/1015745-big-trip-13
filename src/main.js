@@ -1,6 +1,10 @@
-import {MenuItem, UpdateType, FilterType, ApiParams} from "./const.js";
+import {MenuItem, UpdateType, FilterType, ApiParams, StorageParams} from "./const.js";
+import {toast} from "./utils/toast/toast.js";
+import {isOnline} from "./utils/common.js";
 import {render, RenderPosition, remove} from './utils/render';
-import Api from './api';
+import Storage from "./api/storage.js";
+import Provider from "./api/provider.js";
+import Api from './api/api.js';
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 import MenuView from "./view/menu.js";
@@ -10,7 +14,12 @@ import TripInfoPresenter from "./presenter/trip-Info.js";
 import FilterPresenter from "./presenter/filter.js";
 import TripPresenter from "./presenter/trip.js";
 
+const storageName = `${StorageParams.PREFIX}-${StorageParams.VER}`;
+
 const api = new Api(ApiParams.END_POINT, ApiParams.AUTHORIZATION);
+
+const storage = new Storage(storageName, window.localStorage);
+const apiWithProvider = new Provider(api, storage);
 
 const eventsModel = new EventsModel();
 const filterModel = new FilterModel();
@@ -24,7 +33,7 @@ const eventAddBtnComponent = new EventAddBtnView();
 
 const tripInfoPresenter = new TripInfoPresenter(siteHeaderTripElement, eventsModel);
 const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel);
-const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, api);
+const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, apiWithProvider);
 
 let statisticsComponent = null;
 
@@ -56,6 +65,11 @@ const handleAddBtnClick = () => {
   tripPresenter.destroy();
   filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   tripPresenter.init();
+  if (!isOnline()) {
+    toast(`You can't create new event offline`);
+    siteMenuComponent.setMenuItem(MenuItem.TABLE);
+    return;
+  }
   tripPresenter.createEvent(handleEventNewFormClose);
   EventAddBtnView.disable();
   siteMenuComponent.setMenuItem(MenuItem.TABLE);
@@ -65,7 +79,7 @@ tripInfoPresenter.init();
 filterPresenter.init();
 tripPresenter.init();
 
-api.getAllData()
+apiWithProvider.getAllData()
   .then((events)=> {
     eventsModel.setEvents(UpdateType.INIT, events);
   })
@@ -78,3 +92,16 @@ api.getAllData()
     siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
     eventAddBtnComponent.setAddBtnClickHandler(handleAddBtnClick);
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

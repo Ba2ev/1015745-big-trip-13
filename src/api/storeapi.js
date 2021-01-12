@@ -1,4 +1,4 @@
-export default class Store {
+export default class StoreApi {
   constructor() {
     this._offers = null;
     this._places = null;
