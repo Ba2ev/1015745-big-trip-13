@@ -1,5 +1,5 @@
-import Store from './store';
-import EventsModel from "./model/events.js";
+import StoreApi from './storeapi.js';
+import EventsModel from "../model/events.js";
 
 const Method = {
   GET: `GET`,
@@ -38,13 +38,13 @@ export default class Api {
   getAllData() {
     return Promise.all([this.getEvents(), this.getOffers(), this.getPlaces()])
     .then(([events, offers, places]) => {
-      Store.setOffers(offers);
-      Store.setPlaces(places);
+      StoreApi.setOffers(offers);
+      StoreApi.setPlaces(places);
       return Promise.resolve(events);
     });
   }
 
-  updateEvents(event) {
+  updateEvent(event) {
     return this._load({
       url: `points/${event.id}`,
       method: Method.PUT,
@@ -71,6 +71,16 @@ export default class Api {
       url: `points/${event.id}`,
       method: Method.DELETE
     });
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({

@@ -1,8 +1,8 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
-import {OfferTypes} from './../const';
-import Store from '../store';
+import {OfferTypes} from '../const.js';
+import StoreApi from '../api/storeapi.js';
 import SmartView from "./smart.js";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
@@ -36,14 +36,14 @@ const renderTypeList = (dataType) => {
 };
 
 const renderPlaceList = () => {
-  const places = Store.getPlaces().map((place) => place.name);
+  const places = StoreApi.getPlaces().map((place) => place.name);
   return `<datalist id="destination-list-1">
     ${places.map((name) => `<option value="${name}"></option>`).join(``)}
   </datalist>`;
 };
 
 const renderOffersTemplate = (activeType, activeOffers) => {
-  const {offers} = Store.getOffers().find((store) => store.type === activeType);
+  const {offers} = StoreApi.getOffers().find((store) => store.type === activeType);
   return `<section class="event__section event__section--offers">
   <h3 class="event__section-title event__section-title--offers">Offers</h3>
   <div class="event__available-offers">
@@ -141,7 +141,7 @@ export default class EventEdit extends SmartView {
     this._event = event;
     this._data = EventEdit.parseEventToData(event);
     this._datepicker = null;
-    this._offersStore = Store.getOffers();
+    this._offersStore = StoreApi.getOffers();
 
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
@@ -245,7 +245,7 @@ export default class EventEdit extends SmartView {
   _placeToggleHandler(evt) {
     evt.preventDefault();
 
-    const newPlace = Store.getPlaces().find((place) => place.name === evt.target.value);
+    const newPlace = StoreApi.getPlaces().find((place) => place.name === evt.target.value);
 
     if (!newPlace) {
       evt.target.setCustomValidity(`Данного варианта нет в списке`);

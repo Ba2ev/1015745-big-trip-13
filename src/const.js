@@ -1,7 +1,12 @@
 export const OfferTypes = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 
+export const StorageParams = {
+  PREFIX: `bigtrip-localstorage`,
+  VER: `v13`,
+};
+
 export const ApiParams = {
-  AUTHORIZATION: `Basic 98gr34hf948fhglkeg8`,
+  AUTHORIZATION: `Basic g6ser84jhdf68gy4ikf35hj18`,
   END_POINT: `https://13.ecmascript.pages.academy/big-trip`,
 };
 

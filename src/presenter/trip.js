@@ -74,7 +74,7 @@ export default class Trip {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
         this._eventPresenter[update.id].setViewState(EventPresenterViewState.SAVING);
-        this._api.updateEvents(update).then((response) => {
+        this._api.updateEvent(update).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         })
         .catch(() => {

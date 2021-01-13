@@ -1,4 +1,6 @@
 import {UserAction, UpdateType} from "../const.js";
+import {toast} from "../utils/toast/toast.js";
+import {isOnline} from "../utils/common.js";
 import {render, replace, remove} from "../utils/render.js";
 import {isDatesEqual} from "../utils/event.js";
 import EventView from "../view/event.js";
@@ -130,6 +132,11 @@ export default class Event {
   }
 
   _handleRollDownClick() {
+    if (!isOnline()) {
+      toast(`You can't edit event offline`);
+      return;
+    }
+
     this._replaceEventToForm();
   }
 
@@ -152,6 +159,11 @@ export default class Event {
   }
 
   _handleFormSubmit(update) {
+    if (!isOnline()) {
+      toast(`You can't save event offline`);
+      return;
+    }
+
     const isMinorUpdate = !isDatesEqual(this._event, update);
 
     this._changeData(
@@ -161,6 +173,11 @@ export default class Event {
   }
 
   _handleDeleteClick(event) {
+    if (!isOnline()) {
+      toast(`You can't delete event offline`);
+      return;
+    }
+
     this._changeData(
         UserAction.DELETE_EVENT,
         UpdateType.MINOR,
