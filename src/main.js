@@ -32,7 +32,7 @@ const siteMenuComponent = new MenuView();
 const eventAddBtnComponent = new EventAddBtnView();
 
 const tripInfoPresenter = new TripInfoPresenter(siteHeaderTripElement, eventsModel);
-const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel);
+const filterPresenter = new FilterPresenter(siteHeaderControlsElement, filterModel, eventsModel);
 const tripPresenter = new TripPresenter(siteMainTripElement, eventsModel, filterModel, apiWithProvider);
 
 let statisticsComponent = null;
