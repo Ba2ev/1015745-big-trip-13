@@ -197,6 +197,10 @@ export default class EventAdd extends SmartView {
           this.getElement().querySelector(`#event-start-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
+            enableTime: true,
+            /* eslint-disable */
+            time_24hr: true,
+            /* eslint-enable */
             defaultDate: this._data.date.start,
             onChange: this._startDateChangeHandler
           }
@@ -208,6 +212,10 @@ export default class EventAdd extends SmartView {
           this.getElement().querySelector(`#event-end-time-1`),
           {
             dateFormat: `d/m/Y H:i`,
+            enableTime: true,
+            /* eslint-disable */
+            time_24hr: true,
+            /* eslint-enable */
             defaultDate: this._data.date.end,
             onChange: this._endDateChangeHandler
           }
@@ -281,7 +289,7 @@ export default class EventAdd extends SmartView {
           {},
           this._data.date,
           {
-            start: dayjs(userDate).hour(23).minute(59).second(59).toDate(),
+            start: dayjs(userDate).second(59).toDate(),
           }
       ),
     });
@@ -293,7 +301,7 @@ export default class EventAdd extends SmartView {
           {},
           this._data.date,
           {
-            end: dayjs(userDate).hour(23).minute(59).second(59).toDate(),
+            end: dayjs(userDate).second(59).toDate(),
           }
       ),
     });

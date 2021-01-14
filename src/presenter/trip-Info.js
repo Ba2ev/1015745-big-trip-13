@@ -18,12 +18,6 @@ export default class TripInfo {
   }
 
   init() {
-    const prevTripInfoComponent = this._tripInfoComponent;
-
-    if (prevTripInfoComponent !== null) {
-      remove(prevTripInfoComponent);
-    }
-
     this._renderTripInfo();
   }
 
@@ -45,6 +39,12 @@ export default class TripInfo {
     }
 
     const events = this._eventsModel.getEvents().sort(sortEventDate);
+
+    const prevTripInfoComponent = this._tripInfoComponent;
+
+    if (prevTripInfoComponent !== null) {
+      remove(prevTripInfoComponent);
+    }
 
     this._tripInfoComponent = new TripInfoView();
     this._tripRouteComponent = new TripRouteView(events);
