@@ -202,7 +202,7 @@ export default class EventAdd extends SmartView {
             time_24hr: true,
             /* eslint-enable */
             defaultDate: this._data.date.start,
-            onChange: this._startDateChangeHandler
+            onClose: this._startDateChangeHandler
           }
       );
     }
@@ -217,7 +217,7 @@ export default class EventAdd extends SmartView {
             time_24hr: true,
             /* eslint-enable */
             defaultDate: this._data.date.end,
-            onChange: this._endDateChangeHandler
+            onClose: this._endDateChangeHandler
           }
       );
     }
@@ -293,6 +293,8 @@ export default class EventAdd extends SmartView {
           }
       ),
     });
+
+    this._datepicker.set(`minDate`, userDate);
   }
 
   _endDateChangeHandler([userDate]) {
