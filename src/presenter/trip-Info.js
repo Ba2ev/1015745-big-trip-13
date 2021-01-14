@@ -1,6 +1,5 @@
-import {UpdateType} from "../const.js";
 import {sortEventDate} from "../utils/event.js";
-import {render, RenderPosition} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import TripInfoView from "../view/trip-info.js";
 import TripRouteView from "../view/trip-route.js";
 import TripCostView from "../view/trip-cost.js";
@@ -19,15 +18,17 @@ export default class TripInfo {
   }
 
   init() {
+    const prevTripInfoComponent = this._tripInfoComponent;
+
+    if (prevTripInfoComponent !== null) {
+      remove(prevTripInfoComponent);
+    }
+
     this._renderTripInfo();
   }
 
-  _handleModelEvent(updateType) {
-    switch (updateType) {
-      case UpdateType.INIT:
-        this._renderTripInfo();
-        break;
-    }
+  _handleModelEvent() {
+    this.init();
   }
 
   _renderTripRoute() {
