@@ -42,3 +42,11 @@ export const isEventPast = (date) => {
 export const isEventFuture = (date) => {
   return dayjs(date).diff(dayjs()) >= 0;
 };
+
+export const isPricesEqual = (prevEvent, newEvent) => {
+  return prevEvent.price === newEvent.price;
+};
+
+export const isDurationsEqual = (prevEvent, newEvent) => {
+  return getEventDuration(prevEvent.date.start, prevEvent.date.end) === getEventDuration(newEvent.date.start, newEvent.date.end);
+};

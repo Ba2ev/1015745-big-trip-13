@@ -2,7 +2,7 @@ import {UserAction, UpdateType} from "../const.js";
 import {toast} from "../utils/toast/toast.js";
 import {isOnline} from "../utils/common.js";
 import {render, replace, remove} from "../utils/render.js";
-import {isDatesEqual} from "../utils/event.js";
+import {isDatesEqual, isPricesEqual, isDurationsEqual} from "../utils/event.js";
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
 
@@ -163,8 +163,7 @@ export default class Event {
       toast(`You can't save event offline`);
       return;
     }
-
-    const isMinorUpdate = !isDatesEqual(this._event, update);
+    const isMinorUpdate = !isDatesEqual(this._event, update) || !isPricesEqual(this._event, update) || !isDurationsEqual(this._event, update);
 
     this._changeData(
         UserAction.UPDATE_EVENT,
