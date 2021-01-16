@@ -1,7 +1,7 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
-import {OfferTypes} from './../const';
+import {OfferTypes, DatepickerParams} from './../const';
 import StoreApi from '../api/storeapi.js';
 import SmartView from "./smart.js";
 
@@ -82,6 +82,7 @@ const renderDestinationTemplate = (placeText, placeImages) => {
   ${imagesTemplate}
 </section>`;
 };
+
 const createEventAddTemplate = (data) => {
   const {type, date, price, offers, placeName, placeText, placeImages, isOffers, isText, isImages, isDisabled, isSaving, isDeleting} = data;
 
@@ -156,8 +157,13 @@ export default class EventAdd extends SmartView {
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
+    this._setCurrentOffers();
     this._setInnerHandlers();
     this._setDatepicker();
+  }
+
+  getTemplate() {
+    return createEventAddTemplate(this._data);
   }
 
   removeElement() {
@@ -175,15 +181,32 @@ export default class EventAdd extends SmartView {
     );
   }
 
-  getTemplate() {
-    return createEventAddTemplate(this._data);
-  }
-
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepicker();
     this.setSubmitHandler(this._callback.submit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
+  }
+
+  setSubmitHandler(callback) {
+    this._callback.submit = callback;
+    this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
+  }
+
+  _setCurrentOffers() {
+    const {offers} = StoreApi.getTypeOffers(this._data.type);
+
+    this.updateData(
+        {
+          offers: [],
+          isOffers: offers.length > 0 ? true : false,
+        }
+    );
   }
 
   _setDatepicker() {
@@ -195,30 +218,26 @@ export default class EventAdd extends SmartView {
     if (this._data.date.start) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-start-time-1`),
-          {
-            dateFormat: `d/m/Y H:i`,
-            enableTime: true,
-            /* eslint-disable */
-            time_24hr: true,
-            /* eslint-enable */
-            defaultDate: this._data.date.start,
-            onClose: this._startDateChangeHandler
-          }
+          Object.assign(
+              DatepickerParams,
+              {
+                defaultDate: this._data.date.start,
+                onClose: this._startDateChangeHandler
+              }
+          )
       );
     }
 
     if (this._data.date.end) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-end-time-1`),
-          {
-            dateFormat: `d/m/Y H:i`,
-            enableTime: true,
-            /* eslint-disable */
-            time_24hr: true,
-            /* eslint-enable */
-            defaultDate: this._data.date.end,
-            onClose: this._endDateChangeHandler
-          }
+          Object.assign(
+              DatepickerParams,
+              {
+                defaultDate: this._data.date.end,
+                onClose: this._endDateChangeHandler
+              }
+          )
       );
     }
   }
@@ -330,16 +349,6 @@ export default class EventAdd extends SmartView {
   _deleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(EventAdd.parseDataToEvent(this._data));
-  }
-
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
-  }
-
-  setSubmitHandler(callback) {
-    this._callback.submit = callback;
-    this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
   }
 
   static parseEventToData(event) {

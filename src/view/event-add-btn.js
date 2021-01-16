@@ -17,12 +17,9 @@ export default class EventAddBtn extends AbstractView {
     return createEventAddBtnTemplate();
   }
 
-  static enable() {
-    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
-  }
-
-  static disable() {
-    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
+  setAddBtnClickHandler(callback) {
+    this._callback.btnClick = callback;
+    this.getElement().addEventListener(`click`, this._addBtnClickHandler);
   }
 
   _addBtnClickHandler(evt) {
@@ -30,8 +27,11 @@ export default class EventAddBtn extends AbstractView {
     this._callback.btnClick();
   }
 
-  setAddBtnClickHandler(callback) {
-    this._callback.btnClick = callback;
-    this.getElement().addEventListener(`click`, this._addBtnClickHandler);
+  static enable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = false;
+  }
+
+  static disable() {
+    document.querySelector(`.trip-main__event-add-btn`).disabled = true;
   }
 }

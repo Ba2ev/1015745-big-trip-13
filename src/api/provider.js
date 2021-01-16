@@ -14,7 +14,6 @@ const createStoreStructure = (items) => {
     });
   }, {});
 };
-
 export default class Provider {
   constructor(api, store) {
     this._api = api;

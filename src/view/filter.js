@@ -1,6 +1,6 @@
 import AbstractView from "./abstract.js";
 
-const createFilterItemTemplate = (filter, currentFilterType) => {
+const renderFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
   return (
     `<div class="trip-filters__filter">
@@ -20,7 +20,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
 export const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems
-    .map((filter) => createFilterItemTemplate(filter, currentFilterType))
+    .map((filter) => renderFilterItemTemplate(filter, currentFilterType))
     .join(``);
 
   return `<form class="trip-filters" action="#" method="get">
@@ -41,13 +41,13 @@ export default class Filter extends AbstractView {
     return createFilterTemplate(this._filters, this._currentFilter);
   }
 
-  _filterTypeChangeHandler(evt) {
-    evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
-  }
-
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().addEventListener(`change`, this._filterTypeChangeHandler);
+  }
+
+  _filterTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
   }
 }

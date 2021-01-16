@@ -16,6 +16,10 @@ export default class StoreApi {
     return this._offers;
   }
 
+  static getTypeOffers(offersType) {
+    return this._offers.find((store) => store.type === offersType);
+  }
+
   static getPlaces() {
     return this._places;
   }

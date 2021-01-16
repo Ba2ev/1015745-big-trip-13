@@ -1,7 +1,7 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import flatpickr from "flatpickr";
-import {OfferTypes} from '../const.js';
+import {OfferTypes, DatepickerParams} from '../const.js';
 import StoreApi from '../api/storeapi.js';
 import SmartView from "./smart.js";
 
@@ -184,6 +184,21 @@ export default class EventEdit extends SmartView {
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
+  }
+
+  setRollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupClickHandler);
+  }
+
+  setSubmitHandler(callback) {
+    this._callback.submit = callback;
+    this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
+  }
+
   _setDatepicker() {
     if (this._datepicker) {
       this._datepicker.destroy();
@@ -193,30 +208,26 @@ export default class EventEdit extends SmartView {
     if (this._data.date.start) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-start-time-1`),
-          {
-            dateFormat: `d/m/Y H:i`,
-            enableTime: true,
-            /* eslint-disable */
-            time_24hr: true,
-            /* eslint-enable */
-            defaultDate: this._data.date.start,
-            onClose: this._startDateChangeHandler
-          }
+          Object.assign(
+              DatepickerParams,
+              {
+                defaultDate: this._data.date.start,
+                onClose: this._startDateChangeHandler
+              }
+          )
       );
     }
 
     if (this._data.date.end) {
       this._datepicker = flatpickr(
           this.getElement().querySelector(`#event-end-time-1`),
-          {
-            dateFormat: `d/m/Y H:i`,
-            enableTime: true,
-            /* eslint-disable */
-            time_24hr: true,
-            /* eslint-enable */
-            defaultDate: this._data.date.end,
-            onClose: this._endDateChangeHandler
-          }
+          Object.assign(
+              DatepickerParams,
+              {
+                defaultDate: this._data.date.end,
+                onClose: this._endDateChangeHandler
+              }
+          )
       );
     }
   }
@@ -335,21 +346,6 @@ export default class EventEdit extends SmartView {
   _deleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
-  }
-
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
-    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
-  }
-
-  setRollupClickHandler(callback) {
-    this._callback.rollupClick = callback;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupClickHandler);
-  }
-
-  setSubmitHandler(callback) {
-    this._callback.submit = callback;
-    this.getElement().querySelector(`form`).addEventListener(`submit`, this._submitHandler);
   }
 
   static parseEventToData(event) {

@@ -39,3 +39,11 @@ export const MenuItem = {
   TABLE: `TABLE`,
   STATS: `STATS`,
 };
+
+export const DatepickerParams = {
+  dateFormat: `d/m/Y H:i`,
+  enableTime: true,
+  /* eslint-disable */
+  time_24hr: true,
+  /* eslint-enable */
+};
